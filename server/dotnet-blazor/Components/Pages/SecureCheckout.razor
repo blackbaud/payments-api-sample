@@ -1,0 +1,98 @@
+﻿@page "/securecheckout"
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.DataAccess.Models
+@using Blackbaud.PaymentsAPITutorial.Models.Payments
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+
+@inject PaymentsService _paymentsService
+@inject IAuthenticationService _authService
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Secure Checkout (Backoffice)</PageTitle>
+
+<h1>Secure checkout</h1>
+
+@if (!authenticated)
+{
+    <p>You are not authenticated.</p>
+}
+else
+{
+    
+    <h5>Required properties</h5>
+    @if (loading) {
+        <div>
+            <div class="spinner-grow" role="status">
+            </div>
+            </div>
+    } else {
+    <p>Security Token: <code>@securityToken</code></p>
+    <p>Public key: <code>@publicKey</code></p>
+    <p>Payment configuration id: <code>@savedPaymentData.PaymentConfigurationId</code></p>
+    }
+    
+
+    <button id="updateCard"
+        disabled="@(securityToken == null)"
+        class="btn btn-primary"
+        @onclick="OpenSecureCheckout">Open secure checkout</button>
+
+    <script src="https://api-pte-bsp.sharedservices-dev.com/Checkout/bbCheckout.2.0.js"></script>
+    <script>
+    window.openSecureCheckout = function (publicKey, securityToken, paymentConfigId) {
+        let secureCheckoutData = {
+            amount: 1000,
+            key: publicKey,
+            security_token: securityToken,
+            payment_configuration_id: paymentConfigId
+        };
+        Blackbaud_OpenPaymentForm(secureCheckoutData);
+    };
+</script>
+}
+
+@code {
+    private SavedPaymentData savedPaymentData;
+    private string securityToken;
+    private string publicKey;
+    private bool authenticated;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && authenticated)
+        {
+            loading = true;
+            await LoadData();
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+        securityToken = await _paymentsService.GetSecurityToken(CancellationToken.None);
+        publicKey = await _paymentsService.GetPublicKey(CancellationToken.None);
+    }
+
+    private async Task OpenSecureCheckout()
+    {
+        await JS.InvokeVoidAsync("openSecureCheckout", publicKey, securityToken, savedPaymentData.PaymentConfigurationId);
+    }
+
+    private async Task SelectPaymentConfiguration(string paymentConfigurationId)
+    {
+        await _paymentsService.SelectPaymentConfigurationId(paymentConfigurationId);
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+    }
+}

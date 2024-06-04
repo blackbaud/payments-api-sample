@@ -1,0 +1,97 @@
+﻿@page "/paymentconfig"
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.DataAccess.Models
+@using Blackbaud.PaymentsAPITutorial.Models.Payments
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+
+@inject PaymentsService _paymentsService
+@inject IAuthenticationService _authService
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Payments</PageTitle>
+
+<h2>Payment Configuration</h2>
+<p>Below is a list of all payment configurations, retrieved by calling the
+    <code>GET https://api.sky.blackbaud.com/payments/v1/paymentconfgurations</code> endpoint.
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Id</th>
+            <th>Select</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (configList == null)
+        {
+            <tr>
+                <td colspan="3"><em>Loading...</em></td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var config in configList.Value)
+            {
+                <tr>
+                    <td>@config.Name</td>
+                    <td>@config.Id</td>
+                    <td>
+                        @if (config.Id == savedPaymentData?.PaymentConfigurationId)
+                        {
+                            <em>Selected</em>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary"
+                                @onclick="(e => SelectPaymentConfiguration(config.Id))">Select</button>
+                        }
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private PaymentConfigurationListRead configList;
+    private SavedPaymentData savedPaymentData;
+    private bool authenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && authenticated)
+        {
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        var configListTask = _paymentsService.ListPaymentConfigurations(CancellationToken.None);
+        var savedPaymentDataTask = _paymentsService.GetSavedPaymentData();
+
+        // Fetch data in parallel
+        await Task.WhenAll(configListTask, savedPaymentDataTask);
+
+        configList = configListTask.Result;
+        savedPaymentData = savedPaymentDataTask.Result;
+    }
+
+    private async Task SelectPaymentConfiguration(string paymentConfigurationId)
+    {
+        await _paymentsService.SelectPaymentConfigurationId(paymentConfigurationId);
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+    }
+}

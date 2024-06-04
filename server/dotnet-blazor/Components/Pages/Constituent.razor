@@ -1,0 +1,57 @@
+﻿@page "/constituent"
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@inject ConstituentsService _constituentService
+@attribute [StreamRendering]
+
+<PageTitle>Constituent</PageTitle>
+
+<h1>Constituent</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (constituent == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>@constituent.Id</td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>@constituent.ConstituentType</td>
+        </tr>
+        <tr>
+            <td>lookup_id</td>
+            <td>@constituent.LookupId</td>
+        </tr>
+        <tr>
+            <td>first</td>
+            <td>@constituent.First</td>
+        </tr>
+        <tr>
+            <td>last</td>
+            <td>@constituent.Last</td>
+        </tr>
+    </tbody>
+</table>
+}
+
+@code {
+    private ConstituentModel constituent;
+    protected override async Task OnInitializedAsync()
+    {
+        constituent = await _constituentService.GetConstituentAsync("280", CancellationToken.None);
+    }
+}

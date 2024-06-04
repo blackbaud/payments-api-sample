@@ -1,0 +1,158 @@
+﻿@page "/backofficetransaction"
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.DataAccess.Models
+@using Blackbaud.PaymentsAPITutorial.Models.Gifts
+@using Blackbaud.PaymentsAPITutorial.Models.Payments
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+
+@inject PaymentsService _paymentsService
+@inject GiftsService _giftsService
+@inject IAuthenticationService _authService
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Charge Transaction</PageTitle>
+
+<h2>Create backoffice transaction</h2>
+
+@if (!authenticated)
+{
+    <p>You are not authenticated.</p>
+}
+else
+{
+   <h6>Saved payment method (cardToken)</h6>
+
+    @if (savedPaymentData == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (savedPaymentData.CardToken == null)
+    {
+        <p>No saved payment method found. Please save a payment method using Checkout.</p>
+    }
+    else
+    {
+        <p>This payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property
+    was
+    provided. It will be used to create new Transactions using the <code>POST https://api.sky.blackbaud.com/payments/v1/transactions</code>
+    endpoint.
+</p>
+        <p>Card Token: <code>@savedPaymentData?.CardToken</code></p>
+    }
+
+    <h6>Selected Payment Configuration</h6>
+    <p>Payment Confguration Id: <code>@savedPaymentData?.PaymentConfigurationId</code></p>
+
+    <button class="btn btn-primary"
+    @onclick="CreateBackofficeTransaction">
+        @if (creating)
+        {
+            <div class="spinner-grow spinner-grow-sm" role="status">
+            </div>
+        }
+        Create transaction
+    </button>
+
+       
+
+        @if (transaction != null)
+        {
+            <div class="content-stacked-spaced">
+            <h5>Created Transaction (<code>TransactionRead</code>)</h5>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>@transaction.Id</td>
+                    </tr>
+                    <tr>
+                        <td>amount</td>
+                        <td>@transaction.Amount</td>
+                    </tr>
+                    <tr>
+                        <td>token</td>
+                        <td>@transaction.Token</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        }
+
+        @if (gift != null)
+        {
+            <div class="content-stacked-spaced">
+            <h5>Created Gift (<code>GiftRead</code>)</h5>
+            <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>id</td>
+                    <td>@gift.Id</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        }
+    }
+
+
+@code {
+    private bool authenticated;
+    private SavedPaymentData savedPaymentData;
+    private TransactionRead transaction;
+    private GiftRead gift;
+
+    private bool creating = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && authenticated)
+        {
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+    }
+
+    private async Task CreateBackofficeTransaction()
+    {
+        creating = true;
+        var cancellationToken = CancellationToken.None;
+        var transactionRead =
+            transaction = await _paymentsService.CreateBackofficeTransaction(CancellationToken.None);
+
+        gift = await _giftsService.CreateGift(
+            transactionRead,
+            savedPaymentData.PaymentConfigurationId,
+            transactionRead.Token,
+            anonymous: false,
+            cancellationToken
+        );
+
+        creating = false;
+    }
+}

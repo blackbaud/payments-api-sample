@@ -1,0 +1,105 @@
+﻿@page "/checkouttransaction"
+@using Blackbaud.PaymentsAPITutorial.DataAccess
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.DataAccess.Models
+@using Blackbaud.PaymentsAPITutorial.Models.Gifts
+@using Blackbaud.PaymentsAPITutorial.Models.Payments
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+
+@inject PaymentsService _paymentsService
+@inject IAuthenticationService _authService
+@inject LocalFileDataAdapter _localFileDataAdapter
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Checkout Transaction</PageTitle>
+<h3>Checkout</h3>
+<p>This page will display the latest Transaction and Gift records created from the client-side Checkout integration.</p>
+<p>The client calls the <code>POST /api/payments/checkouttransaction/capture</code> endpoint on this application.</p>
+<p>This application then calls the Payments API <code>POST https://api.sky.blackbaud.com/payments/v1/checkout/transaction</code> endpoint to capture the authorized transaction.</p>
+<p>After a successful capture of the transaction, a corresponding Gift record is created in RE NXT using the <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.</p>
+<p>References</p>
+<ul>
+    <li><a href="https://developer.sky.blackbaud.com/api#api=payments&operation=CreateCheckoutTransaction">Create Checkout Transaction</a></li>
+    <li><a href="https://developer.sky.blackbaud.com/api#api=58bdd5edd7dcde06046081d6&operation=CreateGift">Create Gift</a></li>
+</ul>
+
+@if (!authenticated)
+{
+    <p>You are not authenticated.</p>
+}
+else
+{
+    @if (transaction != null)  {
+<h5>Latest Transaction (<code>TransactionRead</code>)</h5>
+    <table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>@transaction.Id</td>
+        </tr>
+        <tr>
+            <td>amount</td>
+            <td>@transaction.Amount</td>
+        </tr>
+        <tr>
+            <td>token</td>
+            <td>@transaction.Token</td>
+        </tr>
+    </tbody>
+</table>
+    }
+    
+    @if  (gift != null)  {
+    <h5>Latest Gift (<code>GiftRead</code>)</h5>
+    <table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>@gift.Id</td>
+        </tr>
+    </tbody>
+</table>
+    }
+}
+
+@code {
+    private bool authenticated;
+    private CheckoutTransactionData checkoutTransactionData;
+    private TransactionRead transaction { get => checkoutTransactionData?.Transaction; }
+    private GiftRead gift { get => checkoutTransactionData?.Gift; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && authenticated)
+        {
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+       checkoutTransactionData = await _localFileDataAdapter.ReadDataAsync<CheckoutTransactionData>();
+    }
+}

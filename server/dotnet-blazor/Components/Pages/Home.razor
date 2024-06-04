@@ -1,0 +1,31 @@
+﻿@page "/"
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+@inject IAuthenticationService _authService
+
+<PageTitle>Home</PageTitle>
+
+<h1>Payments API Sample App</h1>
+
+<p>This is a sample application that demonstrates how to use the Payments API.</p>
+<p>Once authenticated, choose a tab from the left to interact with different samples.</p>
+
+<h3>Authentication</h3>
+
+@if (authenticated)
+{
+    <p>You are authenticated.</p>
+}
+else
+{
+    <a href="/auth/login"
+    class="btn btn-primary">Log in</a>
+}
+
+@code {
+    private bool authenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+}

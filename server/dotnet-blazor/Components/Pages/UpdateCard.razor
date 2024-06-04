@@ -1,0 +1,99 @@
+﻿@page "/updatecard"
+@using Blackbaud.PaymentsAPITutorial.Models
+@using Blackbaud.PaymentsAPITutorial.DataAccess.Models
+@using Blackbaud.PaymentsAPITutorial.Models.Payments
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic
+@using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces
+
+@inject PaymentsService _paymentsService
+@inject IAuthenticationService _authService
+@inject IJSRuntime JS
+
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Update Stored Card</PageTitle>
+
+<h3>Update stored card</h3>
+
+@if (!authenticated)
+{
+    <p>You are not authenticated.</p>
+}
+else
+{
+    @if (savedPaymentData == null)
+    {
+        <div>
+            <div class="spinner-grow" role="status">
+            </div>
+        </div>
+    }
+    else if (savedPaymentData.CardToken == null)
+    {
+        <p>No saved payment method found.</p>
+    }
+    else
+    {
+        <h5>Saved payment method (cardToken)</h5>
+        <p>This payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property
+            was
+            provided. The <code>Blackbaud_OpenUpdateCardForm</code> can be used to update the card details associated with the token.
+        </p>
+        <p>Token: <code>@savedPaymentData?.CardToken</code></p>
+        <p>Public Key: <code>@publicKey</code></p>
+    }
+
+    <button id="updateCard"
+            disabled="@(savedPaymentData?.CardToken == null)"
+            class="btn btn-primary"
+            @onclick="OpenUpdateCard">Update card</button>
+
+    <script src="https://api-pte-bsp.sharedservices-dev.com/Checkout/bbCheckout.2.0.js"></script>
+    <script>
+    window.updateCard = function (cardToken, publicKey) {
+        let updateCardData = {
+            card_token: cardToken,
+            key: publicKey
+        };
+        Blackbaud_OpenUpdateCardForm(updateCardData);
+    };
+</script>
+}
+
+@code {
+    private SavedPaymentData savedPaymentData;
+    private string publicKey;
+    private bool authenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authenticated = _authService.IsAuthenticated();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && authenticated)
+        {
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+        publicKey = await _paymentsService.GetPublicKey(CancellationToken.None);
+    }
+
+    private async Task OpenUpdateCard()
+    {
+        await JS.InvokeVoidAsync("updateCard", savedPaymentData.CardToken, publicKey);
+    }
+
+    private async Task SelectPaymentConfiguration(string paymentConfigurationId)
+    {
+        await _paymentsService.SelectPaymentConfigurationId(paymentConfigurationId);
+        savedPaymentData = await _paymentsService.GetSavedPaymentData();
+    }
+}

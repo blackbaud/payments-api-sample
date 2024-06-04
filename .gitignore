@@ -1,0 +1,38 @@
+# Ignore build output
+bin
+obj
+
+# Ignore NuGet packages
+/packages/
+
+# Ignore Visual Studio files
+.vs/
+*.suo
+*.user
+*.userprefs
+
+# Ignore build artifacts
+*.dll
+*.pdb
+*.exe
+*.cache
+*.log
+
+# Ignore publish output
+/wwwroot/dist/
+/wwwroot/_framework/
+
+# Ignore npm packages
+/node_modules/
+
+# Ignore IDE-specific files
+*.idea/
+*.sln.iml
+*.sln.DotSettings.user
+
+# Dev config
+appsettings.Development.json
+
+datastore/
+
+.DS_Store

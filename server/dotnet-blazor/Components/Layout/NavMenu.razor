@@ -1,0 +1,59 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand"
+            href="">PaymentsAPITutorial</a>
+    </div>
+</div>
+
+<input type="checkbox"
+    title="Navigation menu"
+    class="navbar-toggler" />
+
+<div class="nav-scrollable"
+    onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href=""
+                Match="NavLinkMatch.All">
+                <i class="bi bi-house-door-fill"
+                    aria-hidden="true"></i> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href="paymentconfig">
+                <i class="bi bi-bank"
+                    aria-hidden="true"></i> Payment config
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href="checkouttransaction">
+                <i class="bi bi-bank"
+                    aria-hidden="true"></i> Checkout transaction
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href="backofficetransaction">
+                <i class="bi bi-bank"
+                    aria-hidden="true"></i> Backoffice transaction
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href="updatecard">
+                <i class="bi bi-bank"
+                    aria-hidden="true"></i> Update card
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link"
+                href="securecheckout">
+                <i class="bi bi-bank"
+                    aria-hidden="true"></i> Secure checkout
+            </NavLink>
+        </div>
+    </nav>
+</div>

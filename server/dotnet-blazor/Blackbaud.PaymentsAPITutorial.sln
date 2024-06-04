@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blackbaud.PaymentsAPITutorial", "Blackbaud.PaymentsAPITutorial.csproj", "{93C96354-4598-4F68-8082-D9ABE5ECE84F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2554C415-524E-4943-9A7D-D24933484277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2554C415-524E-4943-9A7D-D24933484277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2554C415-524E-4943-9A7D-D24933484277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2554C415-524E-4943-9A7D-D24933484277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C96354-4598-4F68-8082-D9ABE5ECE84F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C96354-4598-4F68-8082-D9ABE5ECE84F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C96354-4598-4F68-8082-D9ABE5ECE84F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C96354-4598-4F68-8082-D9ABE5ECE84F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5583F56C-4F01-4777-ACCF-D6AE0E4FE185}
+	EndGlobalSection
+EndGlobal
