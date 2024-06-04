@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  let transactionData;
   const _baseUrl = "https://localhost:5001/api/payments";
 
   // Fetch checkout config from api
@@ -13,11 +12,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   let recurringInput = document.getElementById("recurring");
   let amountInput = document.getElementById("amount");
 
+  // Set up base transaction data properties
+  let transactionData = {
+    key: config.key,
+    payment_configuration_id: config.payment_configuration_id
+  };
+
   document.getElementById("donate").addEventListener("click", async () => {
-    let transactionData = {
-      key: config.key,
-      payment_configuration_id: config.payment_configuration_id
-    };
     transactionData.amount = parseFloat(amountInput.value);
     if (recurringInput.checked) {
       cardToken = crypto.randomUUID();
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.addEventListener("checkoutComplete", async function (event) {
     // Capture the payment
     const transactionToken = event.detail.transactionToken;
-    const amount = Math.round(transactionData.amount * 100);
+    const amount = Math.round(event.detail.authorizedamount * 100);
     await fetch(`${_baseUrl}/checkouttransactions/capture`, {
       method: "POST",
       headers: {

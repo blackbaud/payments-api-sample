@@ -58,7 +58,8 @@ namespace Blackbaud.PaymentsAPITutorial.Controllers
                 request.PaymentConfigurationId,
                 request.CardToken,
                 anonymous: false,
-                cancellationToken
+                cancellationToken,
+                request.TransactionToken
             );
 
             // Save the transaction and gift records to a local file

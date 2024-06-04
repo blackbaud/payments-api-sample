@@ -92,6 +92,34 @@ public class GiftsService
 
         response.EnsureSuccessStatusCode();
 
+        var postResponse = await response
+            .Content
+            .ReadFromJsonAsync<PostResponse>(cancellationToken: cancellationToken);
+
+        var giftRead = await GetGift(postResponse.Id, cancellationToken);
+
+        return giftRead;
+    }
+
+    /// <summary>
+    /// Get a gift in RE NXT
+    /// </summary>
+    public async Task<GiftRead> GetGift(
+        string giftId,
+        CancellationToken cancellationToken
+    )
+    {
+        var httpClient = await GetClient(cancellationToken, true);
+
+        var response = await httpClient.GetAsync($"gifts/{giftId}", cancellationToken);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        response.EnsureSuccessStatusCode();
+
         var giftRead = await response
             .Content
             .ReadFromJsonAsync<GiftRead>(cancellationToken: cancellationToken);
