@@ -1,7 +1,1 @@
-### Client
-
-
-### Server
-
-* `dotnet new web`
-* 
+TODO: Create top-level README instructions

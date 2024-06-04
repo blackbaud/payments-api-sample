@@ -44,15 +44,15 @@ else
     </thead>
     <tbody>
         <tr>
-            <td>id</td>
+            <td>ID</td>
             <td>@transaction.Id</td>
         </tr>
         <tr>
-            <td>amount</td>
+            <td>Amount</td>
             <td>@transaction.Amount</td>
         </tr>
         <tr>
-            <td>token</td>
+            <td>Token</td>
             <td>@transaction.Token</td>
         </tr>
     </tbody>
@@ -64,14 +64,34 @@ else
     <table class="table table-striped table-hover">
     <thead>
         <tr>
-            <th>Key</th>
+            <th>Property</th>
             <th>Value</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>id</td>
+            <td>ID</td>
             <td>@gift.Id</td>
+        </tr>
+        <tr>
+            <td>Amount</td>
+            <td>@gift.Amount.Value</td>
+        </tr>
+        <tr>
+            <td>BBPS Configuration Id</td>
+            <td>@gift.Payments[0].BbpsConfigurationId</td>
+        </tr>
+        <tr>
+            <td>BBPS Transaction Id</td>
+            <td>@gift.Payments[0].BbpsTransactionId</td>
+        </tr>
+        <tr>
+            <td>Checkout Transaction Id</td>
+            <td>@gift.Payments[0].CheckoutTransactionId</td>
+        </tr>
+        <tr>
+            <td>Account Token</td>
+            <td>@gift.Payments[0].AccountToken</td>
         </tr>
     </tbody>
 </table>
