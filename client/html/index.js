@@ -28,9 +28,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   document.addEventListener("checkoutComplete", async function (event) {
-    // Capture the payment
+    // Read event properties
     const transactionToken = event.detail.transactionToken;
     const amount = Math.round(event.detail.authorizedamount * 100);
+
+    // Display results
+    document.getElementById("transaction-token").innerText = transactionToken;
+    document.getElementById("card-token").innerText = cardToken;
+    document.getElementById("authorized-amount").innerText = event.detail.authorizedamount;
+
+    // Capture the payment
     await fetch(`${_baseUrl}/checkouttransactions/capture`, {
       method: "POST",
       headers: {
