@@ -34,71 +34,71 @@
 else
 {
     @if (transaction != null)  {
-<h5>Latest Transaction (<code>TransactionRead</code>)</h5>
-    <table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Property</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ID</td>
-            <td>@transaction.Id</td>
-        </tr>
-        <tr>
-            <td>Amount</td>
-            <td>@transaction.Amount</td>
-        </tr>
-        <tr>
-            <td>Card Token</td>
-            <td>@transaction.Token</td>
-        </tr>
-        <tr>
-            <td>Transaction Token</td>
-            <td>@checkoutTransactionData.TransactionToken</td>
-        </tr>
-    </tbody>
-</table>
+        <h5>Latest Transaction (<code>TransactionRead</code>)</h5>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>@transaction.Id</td>
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td>@transaction.Amount</td>
+                </tr>
+                <tr>
+                    <td>Card Token</td>
+                    <td>@transaction.Token</td>
+                </tr>
+                <tr>
+                    <td>Transaction Token</td>
+                    <td>@checkoutTransactionData.TransactionToken</td>
+                </tr>
+            </tbody>
+        </table>
     }
     
     @if  (gift != null)  {
-    <h5>Latest Gift (<code>GiftRead</code>)</h5>
-    <table class="table table-striped table-hover">
-    <thead>
-        <tr>
-            <th>Property</th>
-            <th>Value</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>ID</td>
-            <td>@gift.Id</td>
-        </tr>
-        <tr>
-            <td>Amount</td>
-            <td>@gift.Amount.Value</td>
-        </tr>
-        <tr>
-            <td>BBPS Configuration Id</td>
-            <td>@gift.Payments[0].BbpsConfigurationId</td>
-        </tr>
-        <tr>
-            <td>BBPS Transaction Id</td>
-            <td>@gift.Payments[0].BbpsTransactionId</td>
-        </tr>
-        <tr>
-            <td>Checkout Transaction Id</td>
-            <td>@gift.Payments[0].CheckoutTransactionId</td>
-        </tr>
-        <tr>
-            <td>Account Token</td>
-            <td>@gift.Payments[0].AccountToken</td>
-        </tr>
-    </tbody>
-</table>
+        <h5>Latest Gift (<code>GiftRead</code>)</h5>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>@gift.Id</td>
+                </tr>
+                <tr>
+                    <td>Amount</td>
+                    <td>@gift.Amount.Value</td>
+                </tr>
+                <tr>
+                    <td>BBPS Configuration Id</td>
+                    <td>@gift.Payments[0].BbpsConfigurationId</td>
+                </tr>
+                <tr>
+                    <td>BBPS Transaction Id</td>
+                    <td>@gift.Payments[0].BbpsTransactionId</td>
+                </tr>
+                <tr>
+                    <td>Checkout Transaction Id</td>
+                    <td>@gift.Payments[0].CheckoutTransactionId</td>
+                </tr>
+                <tr>
+                    <td>Account Token</td>
+                    <td>@gift.Payments[0].AccountToken</td>
+                </tr>
+            </tbody>
+        </table>
     }
 }
 
