@@ -14,9 +14,9 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
-<PageTitle>Charge Transaction</PageTitle>
+<PageTitle>Create backoffice transaction</PageTitle>
 
-<h3>Create backoffice transaction</h3>
+<h3>Create transaction</h3>
 
 @if (!authenticated)
 {
@@ -24,8 +24,16 @@
 }
 else
 {
-   <h6>Saved payment method (cardToken)</h6>
-
+    <p>The below payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property was
+    provided. It will be used to create new Transactions using the <code>POST https://api.sky.blackbaud.com/payments/v1/transactions</code>
+    endpoint.
+    </p>
+    <p>After a successful creation of the transaction, a corresponding Gift record is created in RE NXT using the <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.</p>
+    <p>References</p>
+    <ul>
+        <li><a href="https://developer.sky.blackbaud.com/api#api=payments&operation=CreateTransaction">Create Transaction</a></li>
+        <li><a href="https://developer.sky.blackbaud.com/api#api=58bdd5edd7dcde06046081d6&operation=CreateGift">Create Gift</a></li>
+    </ul>
     @if (savedPaymentData == null)
     {
         <p><em>Loading...</em></p>
@@ -36,11 +44,8 @@ else
     }
     else
     {
-        <p>This payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property
-    was
-    provided. It will be used to create new Transactions using the <code>POST https://api.sky.blackbaud.com/payments/v1/transactions</code>
-    endpoint.
-</p>
+        
+        <h6>Saved payment method (cardToken)</h6>
         <p>Card Token: <code>@savedPaymentData?.CardToken</code></p>
     }
 
@@ -57,76 +62,70 @@ else
         Create transaction
     </button>
 
-       
-
         @if (transaction != null)
         {
             <div class="content-stacked-spaced">
-            <h5>Created Transaction (<code>TransactionRead</code>)</h5>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Property</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>ID</td>
-                        <td>@transaction.Id</td>
-                    </tr>
-                    <tr>
-                        <td>Amount</td>
-                        <td>@transaction.Amount</td>
-                    </tr>
-                    <tr>
-                        <td>Token</td>
-                        <td>@transaction.Token</td>
-                    </tr>
-                </tbody>
-            </table>
+                <h5>Created Transaction (<code>TransactionRead</code>)</h5>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td>@transaction.Id</td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td>@transaction.Amount</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         }
 
         @if (gift != null)
         {
             <div class="content-stacked-spaced">
-            <h5>Created Gift (<code>GiftRead</code>)</h5>
-            <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ID</td>
-                    <td>@gift.Id</td>
-                </tr>
-                <tr>
-                    <td>Amount</td>
-                    <td>@gift.Amount.Value</td>
-                </tr>
-                <tr>
-                    <td>BBPS Configuration Id</td>
-                    <td>@gift.Payments[0].BbpsConfigurationId</td>
-                </tr>
-                <tr>
-                    <td>BBPS Transaction Id</td>
-                    <td>@gift.Payments[0].BbpsTransactionId</td>
-                </tr>
-                <tr>
-                    <td>Checkout Transaction Id</td>
-                    <td>@gift.Payments[0].CheckoutTransactionId</td>
-                </tr>
-                <tr>
-                    <td>Account Token</td>
-                    <td>@gift.Payments[0].AccountToken</td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
+                <h5>Created Gift (<code>GiftRead</code>)</h5>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td>@gift.Id</td>
+                        </tr>
+                        <tr>
+                            <td>Amount</td>
+                            <td>@gift.Amount.Value</td>
+                        </tr>
+                        <tr>
+                            <td>BBPS Configuration Id</td>
+                            <td>@gift.Payments[0].BbpsConfigurationId</td>
+                        </tr>
+                        <tr>
+                            <td>BBPS Transaction Id</td>
+                            <td>@gift.Payments[0].BbpsTransactionId</td>
+                        </tr>
+                        <tr>
+                            <td>Checkout Transaction Id</td>
+                            <td>@gift.Payments[0].CheckoutTransactionId</td>
+                        </tr>
+                        <tr>
+                            <td>Account Token</td>
+                            <td>@gift.Payments[0].AccountToken</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         }
     }
 
