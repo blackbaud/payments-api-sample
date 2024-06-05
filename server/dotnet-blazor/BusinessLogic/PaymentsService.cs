@@ -140,7 +140,8 @@ public class PaymentsService
             Amount = 1212,
             CardToken = cardToken,
             PaymentConfigurationId = paymentConfigurationId,
-            TransactionType = "CardNotPresent"
+            TransactionType = "CardNotPresent",
+            IsBackoffice = true
         };
 
         var requestBody = new StringContent(
