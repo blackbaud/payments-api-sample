@@ -65,6 +65,7 @@ namespace Blackbaud.PaymentsAPITutorial.Controllers
             // Save the transaction and gift records to a local file
             var checkoutTransactionData = new CheckoutTransactionData
             {
+                TransactionToken = request.TransactionToken,
                 Transaction = transactionRead,
                 Gift = giftRead
             };
