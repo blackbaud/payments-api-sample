@@ -25,7 +25,12 @@ public class LocalFileDataAdapter
 
     public async Task WriteDataAsync<T>(T data)
     {
-        var json = JsonSerializer.Serialize(data);
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        var json = JsonSerializer.Serialize(data, options);
         await File.WriteAllTextAsync(GetFilePath<T>(), json);
     }
 

@@ -18,4 +18,7 @@ public class CreateTransactionRequest
 
     [JsonPropertyName("transaction_type")]
     public string TransactionType { get; set; }
+
+    [JsonPropertyName("is_backoffice")]
+    public bool IsBackoffice { get; set; }
 }
