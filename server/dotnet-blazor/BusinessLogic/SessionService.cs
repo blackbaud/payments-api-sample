@@ -81,7 +81,7 @@ public class SessionService : ISessionService
     /// Get the refresh token expiration date
     /// </summary>
     /// <returns></returns>
-    public DateTimeOffset? GetRefrehExpires()
+    public DateTimeOffset? GetRefreshExpires()
     {
         if (TryGetString(REFRESH_TOKEN_EXPIRES, out var expires))
         {

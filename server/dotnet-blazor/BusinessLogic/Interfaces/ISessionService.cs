@@ -8,7 +8,7 @@ public interface ISessionService
     void ClearTokens();
     string GetAccessToken();
     string GetRefreshToken();
-    DateTimeOffset? GetRefrehExpires();
+    DateTimeOffset? GetRefreshExpires();
     DateTimeOffset? GetAccessExpires();
     string GetStateVerifier(string state);
     void SetStateVerifier(string state, string verifier);

@@ -192,7 +192,10 @@ public class PaymentsService
     {
         var savedPaymentData = await GetSavedPaymentData();
         var httpClient = await GetClient(cancellationToken, false);
-        var response = await httpClient.GetAsync($"checkout/securitytoken/{savedPaymentData.PaymentConfigurationId}", cancellationToken);
+        var response = await httpClient.GetAsync(
+            $"checkout/securitytoken/{savedPaymentData.PaymentConfigurationId}",
+            cancellationToken
+        );
         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return null!;
@@ -237,12 +240,13 @@ public class PaymentsService
         // check for and invalid access token
         if (anonymous)
         {
-            var refresh = await _authService.RefreshAccessTokenFromData(cancellationToken);
+            var refresh = await _authService.RefreshAccessToken(cancellationToken);
             token = refresh.AccessToken;
         }
         else
         {
-            if (!_authService.IsAccessTokenValid() && _authService.HasValidRefreshToken())
+            var validRefresh = await _authService.HasValidRefreshToken();
+            if (!_authService.IsAccessTokenValid() && validRefresh)
             {
                 await _authService.RefreshAccessToken(cancellationToken);
             }

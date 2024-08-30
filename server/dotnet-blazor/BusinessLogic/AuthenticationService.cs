@@ -16,8 +16,6 @@ public class AuthenticationService : IAuthenticationService
     private readonly LocalFileDataAdapter _localFileDataAdapter;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    private string _savedToken;
-
     public AuthenticationService(
         IOptions<AppSettings> appSettings,
         ISessionService sessionService,
@@ -55,8 +53,15 @@ public class AuthenticationService : IAuthenticationService
 
         // Save the access/refresh tokens in the Session.
         _sessionService.SetTokens(model);
+        var refreshExpires = DateTimeOffset
+            .UtcNow
+            .AddSeconds(model.RefreshTokenExpiresIn.GetValueOrDefault());
         await _localFileDataAdapter.WriteDataAsync(
-            new AuthenticationData { RefreshToken = model.RefreshToken }
+            new AuthenticationData
+            {
+                RefreshToken = model.RefreshToken,
+                RefreshExpires = refreshExpires
+            }
         );
 
         return model;
@@ -106,35 +111,19 @@ public class AuthenticationService : IAuthenticationService
     }
 
     /// <summary>
-    /// Refreshes the expired access token (from the refresh token stored in the session).
+    /// Refreshes the expired access token.
     /// </summary>
     public async Task<RefreshTokenResponseModel> RefreshAccessToken(
         CancellationToken cancellationToken
     )
     {
+        var refreshToken = await GetRefreshToken();
         return await FetchTokens(
             new Dictionary<string, string>()
             {
                 { "grant_type", "refresh_token" },
-                { "refresh_token", _sessionService.GetRefreshToken() }
-            },
-            cancellationToken
-        );
-    }
-
-    /// <summary>
-    /// Refreshes the expired access token (from the refresh token stored in the datastore).
-    /// </summary>
-    public async Task<RefreshTokenResponseModel> RefreshAccessTokenFromData(
-        CancellationToken cancellationToken
-    )
-    {
-        var refreshToken = await GetSavedToken();
-        return await FetchTokens(
-            new Dictionary<string, string>()
-            {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken }
+                { "refresh_token", refreshToken },
+                { "preserve_refresh_token", "true" }
             },
             cancellationToken
         );
@@ -165,9 +154,10 @@ public class AuthenticationService : IAuthenticationService
     /// Determines if the user is authenticated
     /// </summary>
     /// <returns></returns>
-    public bool IsAuthenticated()
+    public async Task<bool> IsAuthenticated()
     {
-        return IsAccessTokenValid() || HasValidRefreshToken();
+        var validRefresh = await HasValidRefreshToken();
+        return IsAccessTokenValid() || validRefresh;
     }
 
     /// <summary>
@@ -194,14 +184,14 @@ public class AuthenticationService : IAuthenticationService
     }
 
     /// <summary>
-    /// Determine if there is a valid refresh token stored in session
+    /// Determine if there is a valid refresh token stored in session or in data
     /// </summary>
     /// <returns></returns>
-    public bool HasValidRefreshToken()
+    public async Task<bool> HasValidRefreshToken()
     {
         // get the refresh token from session
-        var refreshToken = _sessionService.GetRefreshToken();
-        var expires = _sessionService.GetRefrehExpires();
+        var refreshToken = await GetRefreshToken();
+        var expires = await GetRefreshExpires();
 
         // if the refresh token is empty return false
         if (
@@ -217,12 +207,23 @@ public class AuthenticationService : IAuthenticationService
         return true;
     }
 
-    private async Task<string> GetSavedToken()
+    private async Task<string> GetRefreshToken()
     {
         var authenticationData = await _localFileDataAdapter.ReadDataAsync<AuthenticationData>();
         if (authenticationData != null)
         {
             return authenticationData.RefreshToken;
+        }
+
+        return null;
+    }
+
+    private async Task<DateTimeOffset?> GetRefreshExpires()
+    {
+        var authenticationData = await _localFileDataAdapter.ReadDataAsync<AuthenticationData>();
+        if (authenticationData != null)
+        {
+            return authenticationData.RefreshExpires;
         }
 
         return null;
