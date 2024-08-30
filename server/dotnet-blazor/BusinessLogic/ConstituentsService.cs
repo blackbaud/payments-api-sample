@@ -32,7 +32,8 @@ public class ConstituentsService
         var httpClient = _httpClientFactory.CreateClient("ConstituentService");
 
         // check for and invalid access token
-        if (!_authService.IsAccessTokenValid() && _authService.HasValidRefreshToken())
+        var validRefresh = await _authService.HasValidRefreshToken();
+        if (!_authService.IsAccessTokenValid() && validRefresh)
         {
             await _authService.RefreshAccessToken(cancellationToken);
         }

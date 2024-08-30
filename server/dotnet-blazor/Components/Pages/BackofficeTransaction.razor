@@ -24,15 +24,20 @@
 }
 else
 {
-    <p>The below payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property was
-    provided. It will be used to create new Transactions using the <code>POST https://api.sky.blackbaud.com/payments/v1/transactions</code>
+    <p>The below payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property
+    was
+    provided. It will be used to create new Transactions using the
+    <code>POST https://api.sky.blackbaud.com/payments/v1/transactions</code>
     endpoint.
-    </p>
-    <p>After a successful creation of the transaction, a corresponding Gift record is created in RE NXT using the <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.</p>
+</p>
+    <p>After a successful creation of the transaction, a corresponding Gift record is created in RE NXT using the
+        <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.</p>
     <p>References</p>
     <ul>
-        <li><a href="https://developer.sky.blackbaud.com/api#api=payments&operation=CreateTransaction">Create Transaction</a></li>
-        <li><a href="https://developer.sky.blackbaud.com/api#api=58bdd5edd7dcde06046081d6&operation=CreateGift">Create Gift</a></li>
+        <li><a href="https://developer.sky.blackbaud.com/api#api=payments&operation=CreateTransaction">Create
+                Transaction</a></li>
+        <li><a href="https://developer.sky.blackbaud.com/api#api=58bdd5edd7dcde06046081d6&operation=CreateGift">Create
+                Gift</a></li>
     </ul>
     @if (savedPaymentData == null)
     {
@@ -44,7 +49,7 @@ else
     }
     else
     {
-        
+
         <h6>Saved payment method (cardToken)</h6>
         <p>Card Token: <code>@savedPaymentData?.CardToken</code></p>
     }
@@ -54,81 +59,81 @@ else
 
     <button class="btn btn-primary"
     @onclick="CreateBackofficeTransaction">
-        @if (creating)
+    @if (creating)
         {
-            <div class="spinner-grow spinner-grow-sm" role="status">
+            <div class="spinner-grow spinner-grow-sm"
+                role="status">
             </div>
         }
         Create transaction
     </button>
 
-        @if (transaction != null)
-        {
-            <div class="content-stacked-spaced">
-                <h5>Created Transaction (<code>TransactionRead</code>)</h5>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ID</td>
-                            <td>@transaction.Id</td>
-                        </tr>
-                        <tr>
-                            <td>Amount</td>
-                            <td>@transaction.Amount</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
-
-        @if (gift != null)
-        {
-            <div class="content-stacked-spaced">
-                <h5>Created Gift (<code>GiftRead</code>)</h5>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Property</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>ID</td>
-                            <td>@gift.Id</td>
-                        </tr>
-                        <tr>
-                            <td>Amount</td>
-                            <td>@gift.Amount.Value</td>
-                        </tr>
-                        <tr>
-                            <td>BBPS Configuration Id</td>
-                            <td>@gift.Payments[0].BbpsConfigurationId</td>
-                        </tr>
-                        <tr>
-                            <td>BBPS Transaction Id</td>
-                            <td>@gift.Payments[0].BbpsTransactionId</td>
-                        </tr>
-                        <tr>
-                            <td>Checkout Transaction Id</td>
-                            <td>@gift.Payments[0].CheckoutTransactionId</td>
-                        </tr>
-                        <tr>
-                            <td>Account Token</td>
-                            <td>@gift.Payments[0].AccountToken</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        }
+    @if (transaction != null)
+    {
+        <div class="content-stacked-spaced">
+    <h5>Created Transaction (<code>TransactionRead</code>)</h5>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>@transaction.Id</td>
+            </tr>
+            <tr>
+                <td>Amount</td>
+                <td>@transaction.Amount</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
     }
 
+    @if (gift != null)
+    {
+        <div class="content-stacked-spaced">
+    <h5>Created Gift (<code>GiftRead</code>)</h5>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>@gift.Id</td>
+            </tr>
+            <tr>
+                <td>Amount</td>
+                <td>@gift.Amount.Value</td>
+            </tr>
+            <tr>
+                <td>BBPS Configuration Id</td>
+                <td>@gift.Payments[0].BbpsConfigurationId</td>
+            </tr>
+            <tr>
+                <td>BBPS Transaction Id</td>
+                <td>@gift.Payments[0].BbpsTransactionId</td>
+            </tr>
+            <tr>
+                <td>Checkout Transaction Id</td>
+                <td>@gift.Payments[0].CheckoutTransactionId</td>
+            </tr>
+            <tr>
+                <td>Account Token</td>
+                <td>@gift.Payments[0].AccountToken</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+    }
+}
 
 @code {
     private bool authenticated;
@@ -140,7 +145,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        authenticated = _authService.IsAuthenticated();
+        authenticated = await _authService.IsAuthenticated();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -162,14 +167,14 @@ else
         creating = true;
         var cancellationToken = CancellationToken.None;
         var transactionRead =
-            transaction = await _paymentsService.CreateBackofficeTransaction(CancellationToken.None);
+        transaction = await _paymentsService.CreateBackofficeTransaction(CancellationToken.None);
 
         gift = await _giftsService.CreateGift(
-            transactionRead,
-            savedPaymentData.PaymentConfigurationId,
-            savedPaymentData.CardToken,
-            anonymous: false,
-            cancellationToken
+        transactionRead,
+        savedPaymentData.PaymentConfigurationId,
+        savedPaymentData.CardToken,
+        anonymous: false,
+        cancellationToken
         );
 
         creating = false;

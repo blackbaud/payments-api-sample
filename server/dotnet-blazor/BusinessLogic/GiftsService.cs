@@ -104,10 +104,7 @@ public class GiftsService
     /// <summary>
     /// Get a gift in RE NXT
     /// </summary>
-    public async Task<GiftRead> GetGift(
-        string giftId,
-        CancellationToken cancellationToken
-    )
+    public async Task<GiftRead> GetGift(string giftId, CancellationToken cancellationToken)
     {
         var httpClient = await GetClient(cancellationToken, true);
 
@@ -139,12 +136,13 @@ public class GiftsService
         // check for and invalid access token
         if (anonymous)
         {
-            var refresh = await _authService.RefreshAccessTokenFromData(cancellationToken);
+            var refresh = await _authService.RefreshAccessToken(cancellationToken);
             token = refresh.AccessToken;
         }
         else
         {
-            if (!_authService.IsAccessTokenValid() && _authService.HasValidRefreshToken())
+            var validRefresh = await _authService.HasValidRefreshToken();
+            if (!_authService.IsAccessTokenValid() && validRefresh)
             {
                 await _authService.RefreshAccessToken(cancellationToken);
             }

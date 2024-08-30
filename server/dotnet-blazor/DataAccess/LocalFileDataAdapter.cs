@@ -11,12 +11,12 @@ public class LocalFileDataAdapter
         _env = env;
     }
 
-    public async Task<T> ReadDataAsync<T>()
+    public async Task<T> ReadDataAsync<T>() where T : new()
     {
         var filePath = GetFilePath<T>();
         if (!File.Exists(filePath))
         {
-            return default;
+            return new T();
         }
 
         var json = await File.ReadAllTextAsync(filePath);

@@ -25,9 +25,10 @@ else
     @if (savedPaymentData == null)
     {
         <div>
-            <div class="spinner-grow" role="status">
-            </div>
-        </div>
+    <div class="spinner-grow"
+        role="status">
+    </div>
+</div>
     }
     else if (savedPaymentData.CardToken == null)
     {
@@ -38,16 +39,17 @@ else
         <h5>Saved payment method (cardToken)</h5>
         <p>This payment method is saved from the most recent Checkout interaction when a <code>card_token</code> property
             was
-            provided. The <code>Blackbaud_OpenUpdateCardForm</code> operation can be used to update the card details associated with the token.
+            provided. The <code>Blackbaud_OpenUpdateCardForm</code> operation can be used to update the card details associated
+            with the token.
         </p>
         <p>Token: <code>@savedPaymentData?.CardToken</code></p>
         <p>Public Key: <code>@publicKey</code></p>
     }
 
     <button id="updateCard"
-            disabled="@(savedPaymentData?.CardToken == null)"
-            class="btn btn-primary"
-            @onclick="OpenUpdateCard">Update card</button>
+        disabled="@(savedPaymentData?.CardToken == null)"
+        class="btn btn-primary"
+        @onclick="OpenUpdateCard">Update card</button>
 
     <script src="https://api-pte-bsp.sharedservices-dev.com/Checkout/bbCheckout.2.0.js"></script>
     <script>
@@ -68,7 +70,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        authenticated = _authService.IsAuthenticated();
+        authenticated = await _authService.IsAuthenticated();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

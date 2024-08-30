@@ -10,10 +10,9 @@ public interface IAuthenticationService
         CancellationToken cancellationToken
     );
     Uri GetAuthorizationUri();
-    bool IsAuthenticated();
+    Task<bool> IsAuthenticated();
     bool IsAccessTokenValid();
-    bool HasValidRefreshToken();
+    Task<bool> HasValidRefreshToken();
     void LogOut();
     Task<RefreshTokenResponseModel> RefreshAccessToken(CancellationToken cancellationToken);
-    Task<RefreshTokenResponseModel> RefreshAccessTokenFromData(CancellationToken cancellationToken);
 }

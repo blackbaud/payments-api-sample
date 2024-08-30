@@ -22,19 +22,22 @@
 }
 else
 {
-    
+
     <h5>Required properties</h5>
-    @if (loading) {
+    @if (loading)
+    {
         <div>
-            <div class="spinner-grow" role="status">
-            </div>
-            </div>
-    } else {
-    <p>Security Token: <code>@securityToken</code></p>
-    <p>Public key: <code>@publicKey</code></p>
-    <p>Payment configuration id: <code>@savedPaymentData.PaymentConfigurationId</code></p>
+    <div class="spinner-grow"
+        role="status">
+    </div>
+</div>
     }
-    
+    else
+    {
+        <p>Security Token: <code>@securityToken</code></p>
+        <p>Public key: <code>@publicKey</code></p>
+        <p>Payment configuration id: <code>@savedPaymentData.PaymentConfigurationId</code></p>
+    }
 
     <button id="updateCard"
         disabled="@(securityToken == null)"
@@ -64,7 +67,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        authenticated = _authService.IsAuthenticated();
+        authenticated = await _authService.IsAuthenticated();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
