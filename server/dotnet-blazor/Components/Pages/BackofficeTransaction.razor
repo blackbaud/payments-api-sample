@@ -170,13 +170,13 @@ else
         var transactionRead =
         transaction = await _paymentsService.CreateBackofficeTransaction(CancellationToken.None);
 
-        /*gift = await _giftsService.CreateGift(
+        gift = await _giftsService.CreateGift(
         transactionRead,
         savedPaymentData.PaymentConfigurationId,
         savedPaymentData.CardToken,
         anonymous: false,
         cancellationToken
-        );*/
+        );
 
         creating = false;
     }
