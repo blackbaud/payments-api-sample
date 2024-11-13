@@ -31,7 +31,8 @@ else
     endpoint.
 </p>
     <p>After a successful creation of the transaction, a corresponding Gift record is created in RE NXT using the
-        <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.</p>
+        <code>POST https://api.sky.blackbaud.com/gift/v1/gifts</code> endpoint.
+    </p>
     <p>References</p>
     <ul>
         <li><a href="https://developer.sky.blackbaud.com/api#api=payments&operation=CreateTransaction">Create
@@ -169,13 +170,13 @@ else
         var transactionRead =
         transaction = await _paymentsService.CreateBackofficeTransaction(CancellationToken.None);
 
-        gift = await _giftsService.CreateGift(
+        /*gift = await _giftsService.CreateGift(
         transactionRead,
         savedPaymentData.PaymentConfigurationId,
         savedPaymentData.CardToken,
         anonymous: false,
         cancellationToken
-        );
+        );*/
 
         creating = false;
     }
