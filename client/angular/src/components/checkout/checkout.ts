@@ -3,7 +3,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import {
   BlackbaudCheckoutConstructor,
   BlackbaudCheckoutService,
+  CheckoutCompleteEvent,
   CheckoutConfiguration,
+  CheckoutModalComponent,
   CheckoutModalPaymentOptions,
 } from '@blackbaud/checkout';
 
@@ -37,7 +39,7 @@ export class Checkout implements OnInit {
         const checkoutConfig: CheckoutConfiguration = {
           environmentId: configResponse.environment_id,
           paymentConfigurationId: configResponse.payment_configuration_id,
-          applicationName: 'Payments Engineering Demo',
+          applicationName: 'Payments API',
           completeCoverOptions: {},
           paymentMethodOptions: {
             card: {
@@ -62,14 +64,34 @@ export class Checkout implements OnInit {
         };
 
         this.checkout = BlackbaudCheckout(checkoutConfig);
+
+        this.checkout.checkoutComplete.subscribe(
+          (evt: CheckoutCompleteEvent) => {
+            this.captureTransaction(evt.transaction?.id!, 2750);
+          },
+        );
       });
   }
 
   public openCheckout() {
-    let modal = this.checkout?.createCheckoutModalComponent();
+    let modal: CheckoutModalComponent =
+      this.checkout!.createCheckoutModalComponent();
     let modalOptions: CheckoutModalPaymentOptions = {
       baseAmount: 2750,
     };
-    modal?.openPaymentForm(modalOptions);
+    modal.openPaymentForm(modalOptions);
+  }
+
+  private async captureTransaction(transactionId: string, amount: number) {
+    // Capture the payment
+    await fetch(`${this.#baseUrl}/transactions/${transactionId}/capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: amount,
+      }),
+    });
   }
 }

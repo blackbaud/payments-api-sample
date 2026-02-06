@@ -81,6 +81,50 @@ public class PaymentsService
         return config;
     }
 
+    public async Task<TransactionRead> CaptureTransaction(
+        string transactionId,
+        TransactionCaptureRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var httpClient = await GetClient(cancellationToken, true);
+
+        if (!string.IsNullOrEmpty(request.CardToken))
+        {
+            var savedPaymentData = await GetSavedPaymentData();
+            savedPaymentData.CardToken = request.CardToken;
+
+            await _localFileDataAdapter.WriteDataAsync(savedPaymentData);
+        }
+
+        var checkoutTransactionRequest = new CaptureTransactionRequest { Amount = request.Amount };
+
+        var requestBody = new StringContent(
+            JsonSerializer.Serialize(checkoutTransactionRequest),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        var response = await httpClient.PostAsync(
+            $"transactions/{transactionId}/capture",
+            requestBody,
+            cancellationToken
+        );
+
+        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        response.EnsureSuccessStatusCode();
+
+        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
+            cancellationToken: cancellationToken
+        );
+
+        return transactionRead;
+    }
+
     public async Task<TransactionRead> CaptureCheckoutTransaction(
         TransactionCaptureRequest request,
         CancellationToken cancellationToken
