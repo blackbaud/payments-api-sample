@@ -7,6 +7,7 @@ import {
   CheckoutModalPaymentOptions,
 } from '@blackbaud/checkout';
 
+import { SkyCheckboxModule, SkyInputBoxModule } from '@skyux/forms';
 import { SkyPageModule } from '@skyux/pages';
 import { ProcessingConfiguration } from '../../shared/models/processing-configuration';
 
@@ -14,7 +15,7 @@ declare let BlackbaudCheckout: typeof BlackbaudCheckoutConstructor;
 
 @Component({
   selector: 'app-checkout',
-  imports: [SkyPageModule],
+  imports: [SkyPageModule, SkyCheckboxModule, SkyInputBoxModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -25,13 +26,13 @@ export class Checkout implements OnInit {
 
   #client = inject(HttpClient);
 
-  #checkoutConfig?: ProcessingConfiguration;
+  public checkoutConfig?: ProcessingConfiguration;
 
   ngOnInit(): void {
     this.#client
       .get<ProcessingConfiguration>(`${this.#baseUrl}/checkoutconfiguration`)
       .subscribe((configResponse: ProcessingConfiguration) => {
-        this.#checkoutConfig = configResponse;
+        this.checkoutConfig = configResponse;
 
         const checkoutConfig: CheckoutConfiguration = {
           environmentId: configResponse.environment_id,

@@ -5,20 +5,31 @@
       <h5>Current configuration</h5>
       <div class="container-row">
         <label>Payment Configuration Id</label>
-        <div><code id="payment-config-id"></code></div>
-        <label>Public key:</label>
-        <div><code id="public-key"></code></div>
+        <div>
+          <code id="payment-config-id">{{
+            checkoutConfig?.payment_configuration_id
+          }}</code>
+        </div>
+        <label>Environment id:</label>
+        <div>
+          <code id="env-id">{{ checkoutConfig?.environment_id }}</code>
+        </div>
       </div>
     </div>
     <div class="content-block">
       <h5>Transaction details</h5>
       <div class="container-row">
-        <label for="recurring">Recurring transaction?</label>
-        <input type="checkbox" id="recurring" />
+        <sky-checkbox formControlName="recurring" labelText="Recurring" />
       </div>
       <div class="container-row">
-        <label for="amount">Amount</label>
-        <input type="number" id="amount" value="15.50" />
+        <sky-input-box labelText="Amount" stacked="true">
+          <input
+            formControlName="amount"
+            spellcheck="false"
+            type="number"
+            value="27.50"
+          />
+        </sky-input-box>
       </div>
     </div>
 
