@@ -18,6 +18,8 @@ public class PaymentsService
     private readonly IHttpClientFactory _httpClientFactory = null!;
     private readonly LocalFileDataAdapter _localFileDataAdapter;
 
+    private string? environmentId;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -55,9 +57,9 @@ public class PaymentsService
 
         response.EnsureSuccessStatusCode();
 
-        var model = await response
-            .Content
-            .ReadFromJsonAsync<PaymentConfigurationListRead>(cancellationToken: cancellationToken);
+        var model = await response.Content.ReadFromJsonAsync<PaymentConfigurationListRead>(
+            cancellationToken: cancellationToken
+        );
 
         return model;
     }
@@ -72,7 +74,8 @@ public class PaymentsService
         var config = new CheckoutConfiguration
         {
             Key = publicKey,
-            PaymentConfigurationId = savedPaymentData.PaymentConfigurationId
+            PaymentConfigurationId = savedPaymentData.PaymentConfigurationId,
+            EnvironmentId = environmentId,
         };
 
         return config;
@@ -96,7 +99,7 @@ public class PaymentsService
         var checkoutTransactionRequest = new CheckoutTransactionRequest
         {
             TransactionToken = request.TransactionToken,
-            Amount = request.Amount
+            Amount = request.Amount,
         };
 
         var requestBody = new StringContent(
@@ -118,9 +121,9 @@ public class PaymentsService
 
         response.EnsureSuccessStatusCode();
 
-        var transactionRead = await response
-            .Content
-            .ReadFromJsonAsync<TransactionRead>(cancellationToken: cancellationToken);
+        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
+            cancellationToken: cancellationToken
+        );
 
         return transactionRead;
     }
@@ -140,7 +143,7 @@ public class PaymentsService
             Amount = 1212,
             CardToken = cardToken,
             PaymentConfigurationId = paymentConfigurationId,
-            TransactionType = "CardNotPresent"
+            TransactionType = "CardNotPresent",
         };
 
         var requestBody = new StringContent(
@@ -158,9 +161,9 @@ public class PaymentsService
 
         response.EnsureSuccessStatusCode();
 
-        var transactionRead = await response
-            .Content
-            .ReadFromJsonAsync<TransactionRead>(cancellationToken: cancellationToken);
+        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
+            cancellationToken: cancellationToken
+        );
 
         return transactionRead;
     }
@@ -181,9 +184,9 @@ public class PaymentsService
 
         response.EnsureSuccessStatusCode();
 
-        var model = await response
-            .Content
-            .ReadFromJsonAsync<PublicKeyRead>(cancellationToken: cancellationToken);
+        var model = await response.Content.ReadFromJsonAsync<PublicKeyRead>(
+            cancellationToken: cancellationToken
+        );
 
         return model.PublicKey;
     }
@@ -208,9 +211,9 @@ public class PaymentsService
 
         response.EnsureSuccessStatusCode();
 
-        var model = await response
-            .Content
-            .ReadFromJsonAsync<SecurityTokenRead>(cancellationToken: cancellationToken);
+        var model = await response.Content.ReadFromJsonAsync<SecurityTokenRead>(
+            cancellationToken: cancellationToken
+        );
 
         return model.SecurityToken;
     }
@@ -242,13 +245,15 @@ public class PaymentsService
         {
             var refresh = await _authService.RefreshAccessToken(cancellationToken);
             token = refresh.AccessToken;
+            environmentId = refresh.EnvironmentId;
         }
         else
         {
             var validRefresh = await _authService.HasValidRefreshToken();
             if (!_authService.IsAccessTokenValid() && validRefresh)
             {
-                await _authService.RefreshAccessToken(cancellationToken);
+                var refreshToken = await _authService.RefreshAccessToken(cancellationToken);
+                environmentId = refreshToken.EnvironmentId;
             }
             token = _sessionService.GetAccessToken();
         }
