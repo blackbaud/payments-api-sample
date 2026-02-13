@@ -52,6 +52,15 @@ services.AddSingleton<PaymentsService>();
 services.AddSingleton<GiftsService>();
 services.AddSingleton<LocalFileDataAdapter>();
 
+// Configure session.
+services.AddMemoryCache();
+services.AddDistributedMemoryCache();
+services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.Name = ".AuthCodeFlowTutorial.Session";
+});
+
 var app = builder.Build();
 
 app.MapControllers();
@@ -60,5 +69,7 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/openapi/v1.json", "v1");
 });
+
+app.UseSession();
 
 app.Run();
