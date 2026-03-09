@@ -89,7 +89,7 @@ public class AuthenticationService : IAuthenticationService
             throw new Exception("Error verifying authorization code state");
         }
 
-        // get an access token using the authoriztion code
+        // get an access token using the authorization code
         // the redirect URI must be set up for this client id
         // pass the code verifier
         var response = await FetchTokens(
