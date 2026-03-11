@@ -1,10 +1,15 @@
 using Blackbaud.PaymentsAPI.Sample.Backend;
-using Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic;
-using Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic.Interfaces;
-using Blackbaud.PaymentsAPI.Sample.Backend.DataAccess;
 using Blackbaud.PaymentsAPI.Sample.Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 var services = builder.Services;
 
@@ -39,5 +44,6 @@ app.UseSwaggerUI(options =>
 
 app.UseSession();
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.Run();

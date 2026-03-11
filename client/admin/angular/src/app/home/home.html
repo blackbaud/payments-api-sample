@@ -6,5 +6,21 @@
 
 <h3>Authentication</h3>
 
-<a href="https://localhost:5001/auth/login"
-  class="btn btn-primary">Log in</a>
+@if (authenticated) {
+  <a href="https://localhost:5001/auth/logout" class="btn btn-primary"
+    >Log out</a
+  >
+} @else {
+  <a href="https://localhost:5001/auth/login" class="btn btn-primary">Log in</a>
+}
+<p>Authenticated: {{ authenticated }}</p>
+
+<p>Payment configs</p>
+<ul>
+  @for (config of paymentConfigs; track config.id) {
+    <li>
+      {{ config.name
+      }}<button (click)="selectPaymentConfiguration(config.id)">Select</button>
+    </li>
+  }
+</ul>

@@ -24,7 +24,7 @@ declare let BlackbaudCheckout: typeof BlackbaudCheckoutConstructor;
 export class Checkout implements OnInit {
   public checkout?: BlackbaudCheckoutService;
 
-  #baseUrl = 'https://localhost:5001/api/payments';
+  #baseUrl = 'https://localhost:5001/payments';
 
   #client = inject(HttpClient);
 

@@ -19,9 +19,10 @@ public class AuthenticationController : ControllerBase
     /// Returns a JSON response determining session's authenticated status.
     /// </summary>
     [HttpGet("authenticated")]
-    public ActionResult Authenticated()
+    public async Task<ActionResult> Authenticated()
     {
-        return new OkObjectResult(new { authenticated = _authService.IsAuthenticated() });
+        var isAuthenticated = await _authService.IsAuthenticated();
+        return new OkObjectResult(new { authenticated = isAuthenticated });
     }
 
     /// <summary>
@@ -35,7 +36,7 @@ public class AuthenticationController : ControllerBase
     )
     {
         await _authService.ExchangeCodeForAccessToken(code, state, cancellationToken);
-        return Redirect("/");
+        return Redirect("http://localhost:4200");
     }
 
     /// <summary>
@@ -55,7 +56,7 @@ public class AuthenticationController : ControllerBase
     public ActionResult LogOut()
     {
         _authService.LogOut();
-        return Redirect("/");
+        return Redirect("http://localhost:4200");
     }
 
     /// <summary>
