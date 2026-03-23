@@ -1,26 +1,42 @@
-<h1>Payments API Sample App</h1>
+<main class="container">
+  <h1>Payments API Sample App</h1>
 
-<p>
-  This is a sample application that demonstrates how to use the Payments API.
-</p>
+  <p>
+    This is a sample application that demonstrates how to use the Payments API.
+  </p>
 
-<h3>Authentication</h3>
+  <h3>Authentication</h3>
 
-@if (authenticated) {
-  <a href="https://localhost:5001/auth/logout" class="btn btn-primary"
-    >Log out</a
-  >
-} @else {
-  <a href="https://localhost:5001/auth/login" class="btn btn-primary">Log in</a>
-}
-<p>Authenticated: {{ authenticated }}</p>
-
-<p>Payment configs</p>
-<ul>
-  @for (config of paymentConfigs; track config.id) {
-    <li>
-      {{ config.name
-      }}<button (click)="selectPaymentConfiguration(config.id)">Select</button>
-    </li>
+  @if (authenticated) {
+    <a href="https://localhost:5001/auth/logout" class="btn btn-primary"
+      >Log out</a
+    >
+  } @else {
+    <a href="https://localhost:5001/auth/login" class="btn btn-primary"
+      >Log in</a
+    >
   }
-</ul>
+  <p>Authenticated: {{ authenticated }}</p>
+
+  <p>Payment configs</p>
+  <table>
+    <tbody>
+      @for (config of paymentConfigs; track config.id) {
+        <tr>
+          <td>
+            {{ config.name }}
+          </td>
+          <td>
+            @if (checkoutConfig?.payment_configuration_id === config.id) {
+              Selected
+            } @else {
+              <button (click)="selectPaymentConfiguration(config.id)">
+                Select
+              </button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</main>
