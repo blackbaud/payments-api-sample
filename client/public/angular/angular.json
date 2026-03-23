@@ -19,8 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js",
-              "@skyux/packages/polyfills"
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -31,12 +30,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "@skyux/theme/css/sky.css",
-              "@skyux/theme/css/themes/modern/styles.css"
+              "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
-              "@skyux/icons",
               "autonumeric",
               "dom-autoscroller",
               "dragula",
@@ -89,8 +85,7 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing",
-              "@skyux/packages/polyfills"
+              "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
@@ -101,9 +96,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "@skyux/theme/css/sky.css",
-              "@skyux/theme/css/themes/modern/styles.css"
+              "src/styles.scss"
             ]
           }
         }

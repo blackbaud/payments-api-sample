@@ -9,15 +9,13 @@ import {
   CheckoutModalPaymentOptions,
 } from '@blackbaud/checkout';
 
-import { SkyCheckboxModule, SkyInputBoxModule } from '@skyux/forms';
-import { SkyPageModule } from '@skyux/pages';
 import { ProcessingConfiguration } from '../../shared/models/processing-configuration';
 
 declare let BlackbaudCheckout: typeof BlackbaudCheckoutConstructor;
 
 @Component({
   selector: 'app-checkout',
-  imports: [SkyPageModule, SkyCheckboxModule, SkyInputBoxModule],
+  imports: [],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -29,6 +27,8 @@ export class Checkout implements OnInit {
   #client = inject(HttpClient);
 
   public checkoutConfig?: ProcessingConfiguration;
+
+  public checkoutComplete?: CheckoutCompleteEvent;
 
   ngOnInit(): void {
     this.#client
@@ -67,7 +67,11 @@ export class Checkout implements OnInit {
 
         this.checkout.checkoutComplete.subscribe(
           (evt: CheckoutCompleteEvent) => {
-            this.captureTransaction(evt.transaction?.id!, 2750);
+            this.checkoutComplete = evt;
+            this.captureTransaction(
+              evt.transaction?.id!,
+              evt.transaction?.amountDetails?.total!,
+            );
           },
         );
       });
@@ -84,7 +88,7 @@ export class Checkout implements OnInit {
 
   private async captureTransaction(transactionId: string, amount: number) {
     // Capture the payment
-    await fetch(`${this.#baseUrl}/transactions/${transactionId}/capture`, {
+    fetch(`${this.#baseUrl}/transactions/${transactionId}/capture`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -92,6 +96,8 @@ export class Checkout implements OnInit {
       body: JSON.stringify({
         amount: amount,
       }),
+    }).then((response) => {
+      alert('Payment captured');
     });
   }
 }

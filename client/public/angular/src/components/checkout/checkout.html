@@ -1,60 +1,66 @@
-<sky-page layout="fit">
-  <sky-page-header pageTitle="Checkout"></sky-page-header>
-  <sky-page-content>
-    <div class="content-block">
-      <h5>Current configuration</h5>
-      <div class="container-row">
-        <label>Payment Configuration Id</label>
-        <div>
-          <code id="payment-config-id">{{
-            checkoutConfig?.payment_configuration_id
-          }}</code>
-        </div>
-        <label>Environment id:</label>
-        <div>
-          <code id="env-id">{{ checkoutConfig?.environment_id }}</code>
-        </div>
+<main class="container">
+  <div>
+    <h3>Current configuration</h3>
+    <div>
+      <label>Payment Configuration Id</label>
+      <div>
+        <code id="payment-config-id">{{
+          checkoutConfig?.payment_configuration_id
+        }}</code>
+      </div>
+      <label>Environment id:</label>
+      <div>
+        <code id="env-id">{{ checkoutConfig?.environment_id }}</code>
       </div>
     </div>
-    <div class="content-block">
-      <h5>Transaction details</h5>
-      <div class="container-row">
-        <sky-checkbox formControlName="recurring" labelText="Recurring" />
-      </div>
-      <div class="container-row">
-        <sky-input-box labelText="Amount" stacked="true">
-          <input
-            formControlName="amount"
-            spellcheck="false"
-            type="number"
-            value="27.50"
-          />
-        </sky-input-box>
-      </div>
+  </div>
+  <div>
+    <h3>Transaction details</h3>
+    <div></div>
+    <div>
+      <label for="amount">Amount</label>
+      <input
+        formControlName="amount"
+        spellcheck="false"
+        type="number"
+        value="27.50"
+      />
     </div>
+  </div>
 
-    <button
-      class="sky-btn sky-btn-default"
-      (click)="openCheckout()"
-      type="button"
-    >
-      Donate
-    </button>
+  <button
+    class="sky-btn sky-btn-default"
+    (click)="openCheckout()"
+    type="button"
+  >
+    Donate
+  </button>
 
-    <div class="content-block">
-      <h5>Results</h5>
-      <div class="container-row">
-        <div>Transaction token: <code id="transaction-token"></code></div>
-      </div>
-      <div class="container-row">
-        <div>Card token: <code id="card-token"></code></div>
-      </div>
-      <div class="container-row">
-        <div>Authorized amount: <code id="authorized-amount"></code></div>
+  <div>
+    <h5>Results</h5>
+    <div>
+      <div>
+        Transaction id:
+        <code id="transaction-token">{{
+          checkoutComplete?.transaction?.id
+        }}</code>
       </div>
     </div>
-  </sky-page-content>
-</sky-page>
-<main>
-  <h3></h3>
+    <div>
+      <div>
+        Account token:
+        <code id="card-token">{{
+          checkoutComplete?.transaction?.accountToken
+        }}</code>
+      </div>
+    </div>
+    <div>
+      <div>
+        Authorized amount:
+        <code id="authorized-amount">{{
+          checkoutComplete?.transaction?.amountDetails?.total
+        }}</code>
+      </div>
+    </div>
+  </div>
 </main>
