@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blackbaud.PaymentsAPITutorial.Controllers
 {
     /// <summary>
-    /// Contains endpoints that interact with SKY API (constituents).
+    /// Contains endpoints that interact with SKY Payments API.
     /// </summary>
     [Route("api/[controller]")]
     public class PaymentsController : Controller
@@ -41,7 +41,7 @@ namespace Blackbaud.PaymentsAPITutorial.Controllers
         }
 
         /// <summary>
-        /// Captures a transaction using old Checkout
+        /// Captures a transaction using legacy Checkout
         /// </summary>
         [HttpPost("checkouttransactions/capture")]
         [AllowAnonymous]
@@ -80,7 +80,7 @@ namespace Blackbaud.PaymentsAPITutorial.Controllers
         }
 
         /// <summary>
-        /// Captures a transaction
+        /// Captures a transaction using new Checkout
         /// </summary>
         [HttpPost("transactions/{transactionId}/capture")]
         [AllowAnonymous]
