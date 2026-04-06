@@ -52,9 +52,9 @@ public class AuthenticationService : IAuthenticationService
         );
 
         // Save the access/refresh tokens in the Session.
-        _sessionService.SetTokens(model);
+        _sessionService.SetTokens(model!);
         var refreshExpires = DateTimeOffset.UtcNow.AddSeconds(
-            model.RefreshTokenExpiresIn.GetValueOrDefault()
+            model!.RefreshTokenExpiresIn.GetValueOrDefault()
         );
         await _localFileDataAdapter.WriteDataAsync(
             new AuthenticationData
@@ -118,15 +118,18 @@ public class AuthenticationService : IAuthenticationService
     )
     {
         var refreshToken = await GetRefreshToken();
-        return await FetchTokens(
-            new Dictionary<string, string>()
-            {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken },
-                { "preserve_refresh_token", "true" },
-            },
-            cancellationToken
-        );
+        var requestBody = new Dictionary<string, string>()
+        {
+            { "grant_type", "refresh_token" },
+            { "preserve_refresh_token", "true" },
+        };
+
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            requestBody.Add("refresh_token", refreshToken);
+        }
+
+        return await FetchTokens(requestBody, cancellationToken);
     }
 
     /// <summary>
@@ -207,7 +210,7 @@ public class AuthenticationService : IAuthenticationService
         return true;
     }
 
-    private async Task<string> GetRefreshToken()
+    private async Task<string?> GetRefreshToken()
     {
         var authenticationData = await _localFileDataAdapter.ReadDataAsync<AuthenticationData>();
         if (authenticationData != null)

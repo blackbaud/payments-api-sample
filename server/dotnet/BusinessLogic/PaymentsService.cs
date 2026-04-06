@@ -61,7 +61,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return model;
+        return model!;
     }
 
     /// <inheritdoc/>
@@ -122,7 +122,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return transactionRead;
+        return transactionRead!;
     }
 
     public async Task<TransactionRead> CaptureCheckoutTransaction(
@@ -169,7 +169,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return transactionRead;
+        return transactionRead!;
     }
 
     public async Task<TransactionRead> CreateBackofficeTransaction(
@@ -209,7 +209,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return transactionRead;
+        return transactionRead!;
     }
 
     public async Task<string> GetPublicKey(CancellationToken cancellationToken)
@@ -232,7 +232,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return model.PublicKey;
+        return model!.PublicKey;
     }
 
     public async Task<string> GetSecurityToken(CancellationToken cancellationToken)
@@ -259,7 +259,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return model.SecurityToken;
+        return model!.SecurityToken;
     }
 
     public async Task<SavedPaymentData> GetSavedPaymentData()

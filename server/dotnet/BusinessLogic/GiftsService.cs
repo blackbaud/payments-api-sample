@@ -36,10 +36,10 @@ public class GiftsService
     public async Task<GiftRead> CreateGift(
         TransactionRead transaction,
         string paymentConfigId,
-        string cardToken,
+        string? cardToken,
         bool anonymous,
         CancellationToken cancellationToken,
-        string checkoutTransactionId = null
+        string? checkoutTransactionId = null
     )
     {
         var httpClient = await GetClient(cancellationToken, anonymous);
@@ -50,14 +50,22 @@ public class GiftsService
         // Build payment add
         var paymentAdd = new PaymentAdd
         {
-            // One of either AccountToken or CheckoutTransactionId are required
-            // for payment method details to display on the gift record
-            AccountToken = cardToken,
-            CheckoutTransactionId = checkoutTransactionId,
             BbpsTransactionId = transaction.Id,
             BbpsConfigurationId = paymentConfigId,
             PaymentMethod = "CreditCard",
         };
+
+        // One of either AccountToken or CheckoutTransactionId are required
+        // for payment method details to display on the gift record
+        if (!string.IsNullOrEmpty(cardToken))
+        {
+            paymentAdd.AccountToken = cardToken;
+        }
+
+        if (!string.IsNullOrEmpty(checkoutTransactionId))
+        {
+            paymentAdd.CheckoutTransactionId = checkoutTransactionId;
+        }
 
         var createGiftRequest = new CreateGiftRequest
         {
@@ -95,7 +103,7 @@ public class GiftsService
             cancellationToken: cancellationToken
         );
 
-        var giftRead = await GetGift(postResponse.Id, cancellationToken);
+        var giftRead = await GetGift(postResponse!.Id, cancellationToken);
 
         return giftRead;
     }
@@ -120,7 +128,7 @@ public class GiftsService
             cancellationToken: cancellationToken
         );
 
-        return giftRead;
+        return giftRead!;
     }
 
     private async Task<HttpClient> GetClient(
