@@ -2,6 +2,11 @@ using System.Text.Json;
 
 namespace Blackbaud.PaymentsAPI.Sample.Backend.DataAccess;
 
+/// <summary>
+/// Local file data adapter used as a stand-in for a real database
+/// Reads and writes data to locally stored JSON document files
+/// *Note*: Not to be used for any production workflow
+/// </summary>
 public class LocalFileDataAdapter
 {
     private readonly IHostEnvironment _env;
@@ -13,7 +18,7 @@ public class LocalFileDataAdapter
         EnsureDirectoryExists();
     }
 
-    public async Task<T> ReadDataAsync<T>()
+    public async Task<T?> ReadDataAsync<T>()
         where T : new()
     {
         var filePath = GetFilePath<T>();
@@ -23,6 +28,11 @@ public class LocalFileDataAdapter
         }
 
         var json = await File.ReadAllTextAsync(filePath);
+        if (string.IsNullOrEmpty(json))
+        {
+            return default;
+        }
+
         return JsonSerializer.Deserialize<T>(json);
     }
 
