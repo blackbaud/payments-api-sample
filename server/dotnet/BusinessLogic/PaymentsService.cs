@@ -169,46 +169,6 @@ public class PaymentsService
         return transactionRead!;
     }
 
-    public async Task<TransactionRead> CreateBackofficeTransaction(
-        CancellationToken cancellationToken
-    )
-    {
-        var httpClient = await GetClient(cancellationToken, true);
-
-        var savedPaymentData = await GetSavedPaymentData();
-        var cardToken = savedPaymentData.CardToken;
-        var paymentConfigurationId = savedPaymentData.PaymentConfigurationId;
-
-        var createTransactionRequest = new CreateTransactionRequest
-        {
-            Amount = 1212,
-            CardToken = cardToken,
-            PaymentConfigurationId = paymentConfigurationId!,
-            TransactionType = "CardNotPresent",
-        };
-
-        var requestBody = new StringContent(
-            JsonSerializer.Serialize(createTransactionRequest),
-            Encoding.UTF8,
-            "application/json"
-        );
-
-        var response = await httpClient.PostAsync($"transactions", requestBody, cancellationToken);
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return transactionRead!;
-    }
-
     public async Task<string> GetPublicKey(CancellationToken cancellationToken)
     {
         var httpClient = await GetClient(cancellationToken, true);
