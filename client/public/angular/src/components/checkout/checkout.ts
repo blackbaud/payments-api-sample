@@ -36,17 +36,17 @@ export class Checkout implements OnInit {
   public checkoutForm: FormGroup;
   public checkoutComplete?: CheckoutCompleteEvent;
 
+  get amount(): number {
+    const currencyAmount = this.checkoutForm.get('amount')!.value as number;
+    return Math.round(currencyAmount * 100);
+  }
+
   constructor() {
     this.checkoutForm = new FormGroup({
       amount: new FormControl(27.5, {
         nonNullable: true,
         validators: [Validators.required, Validators.min(0)],
       }),
-      isRecurring: new FormControl(false),
-      chargeLater: new FormControl(false),
-      isVariableAmount: new FormControl(false),
-      billingName: new FormControl(''),
-      comment: new FormControl(''),
     });
   }
 
@@ -100,7 +100,7 @@ export class Checkout implements OnInit {
     let modal: CheckoutModalComponent =
       this.checkout!.createCheckoutModalComponent();
     let modalOptions: CheckoutModalPaymentOptions = {
-      baseAmount: 2750,
+      baseAmount: this.amount,
     };
     modal.openPaymentForm(modalOptions);
   }
@@ -115,7 +115,7 @@ export class Checkout implements OnInit {
       body: JSON.stringify({
         amount: amount,
       }),
-    }).then((response) => {
+    }).then(() => {
       alert('Payment captured');
     });
   }
