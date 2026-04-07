@@ -5,7 +5,7 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic.Interfaces;
 public interface ISessionService
 {
     void SetTokens(RefreshTokenResponseModel response);
-    void ClearTokens();
+    Task ClearTokens();
     string GetAccessToken();
     string GetRefreshToken();
     DateTimeOffset? GetRefreshExpires();

@@ -1,4 +1,6 @@
 using Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic.Interfaces;
+using Blackbaud.PaymentsAPI.Sample.Backend.DataAccess;
+using Blackbaud.PaymentsAPI.Sample.Backend.DataAccess.Models;
 using Blackbaud.PaymentsAPI.Sample.Backend.Models;
 
 namespace Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic;
@@ -12,20 +14,29 @@ public class SessionService : ISessionService
     private const string REFRESH_TOKEN_NAME = "refreshToken";
     private const string ACCESS_TOKEN_EXPIRES = "access_expires";
     private const string REFRESH_TOKEN_EXPIRES = "refresh_expires";
+    private readonly LocalFileDataAdapter _localFileDataAdapter;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public SessionService(IHttpContextAccessor httpContextAccessor)
+    public SessionService(
+        LocalFileDataAdapter localFileDataAdapter,
+        IHttpContextAccessor httpContextAccessor
+    )
     {
+        _localFileDataAdapter = localFileDataAdapter;
         _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
     /// Destroys access and refresh tokens from the session.
     /// </summary>
-    public void ClearTokens()
+    public async Task ClearTokens()
     {
         try
         {
+            // Clear stored refresh token
+            await _localFileDataAdapter.WriteDataAsync(new AuthenticationData());
+
+            // Clear HttpContext
             _httpContextAccessor.HttpContext.Session.Remove(ACCESS_TOKEN_NAME);
             _httpContextAccessor.HttpContext.Session.Remove(REFRESH_TOKEN_NAME);
             _httpContextAccessor.HttpContext.Session.Remove(ACCESS_TOKEN_EXPIRES);

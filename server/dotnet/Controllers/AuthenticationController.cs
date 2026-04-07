@@ -53,9 +53,9 @@ public class AuthenticationController : ControllerBase
     /// Destroys the authenticated session and redirects to Home Page.
     /// </summary>
     [HttpGet("logout")]
-    public ActionResult LogOut()
+    public async Task<IActionResult> LogOut()
     {
-        _authService.LogOut();
+        await _authService.LogOut();
         return Redirect("http://localhost:4200");
     }
 

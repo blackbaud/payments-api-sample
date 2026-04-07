@@ -235,8 +235,8 @@ public class AuthenticationService : IAuthenticationService
     /// <summary>
     /// Destroys the access/refresh tokens stored in the session.
     /// </summary>
-    public void LogOut()
+    public async Task LogOut()
     {
-        _sessionService.ClearTokens();
+        await _sessionService.ClearTokens();
     }
 }

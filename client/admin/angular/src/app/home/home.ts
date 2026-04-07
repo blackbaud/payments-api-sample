@@ -13,6 +13,7 @@ import { ProcessingConfiguration } from '../shared/models/processing-configurati
 })
 export class Home implements OnInit {
   public authenticated: boolean = false;
+  public loading: boolean = false;
   public paymentConfigs: PaymentConfigurationRead[] = [];
   public checkoutConfig?: ProcessingConfiguration;
 
@@ -41,11 +42,13 @@ export class Home implements OnInit {
   }
 
   private fetchPaymentConfigs(): void {
+    this.loading = true;
     this.#client
       .get<PaymentConfigurationListRead>(
         'https://localhost:5001/payments/paymentconfigurations',
       )
       .subscribe((res: PaymentConfigurationListRead) => {
+        this.loading = false;
         this.paymentConfigs = res.value;
       });
   }

@@ -13,6 +13,6 @@ public interface IAuthenticationService
     Task<bool> IsAuthenticated();
     bool IsAccessTokenValid();
     Task<bool> HasValidRefreshToken();
-    void LogOut();
+    Task LogOut();
     Task<RefreshTokenResponseModel> RefreshAccessToken(CancellationToken cancellationToken);
 }
