@@ -5,8 +5,8 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.Models.Payments;
 public class PaymentConfigurationListRead
 {
     [JsonPropertyName("count")]
-    public int Count { get; set; }
+    public required int Count { get; set; }
 
     [JsonPropertyName("value")]
-    public ICollection<PaymentConfigurationRead> Value { get; set; }
+    public required ICollection<PaymentConfigurationRead> Value { get; set; }
 }

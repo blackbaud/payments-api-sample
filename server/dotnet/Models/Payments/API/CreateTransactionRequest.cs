@@ -8,7 +8,7 @@ public class CreateTransactionRequest
     public int Amount { get; set; }
 
     [JsonPropertyName("card_token")]
-    public string CardToken { get; set; }
+    public string? CardToken { get; set; }
 
     [JsonPropertyName("payment_configuration_id")]
     public string PaymentConfigurationId { get; set; }

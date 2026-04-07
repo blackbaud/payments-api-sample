@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
     {
         // Configure app settings so we can inject it into other classes.
         services.AddOptions();
-        var appSettings = configuration.GetSection("AppSettings").Get<AppSettings>();
+        var appSettings = configuration.GetRequiredSection("AppSettings").Get<AppSettings>()!;
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
         // Add Http client for authorizing with SKY API

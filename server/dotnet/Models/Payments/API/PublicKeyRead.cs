@@ -5,5 +5,5 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.Models.Payments;
 public class PublicKeyRead
 {
     [JsonPropertyName("public_key")]
-    public string PublicKey { get; set; }
+    public required string PublicKey { get; set; }
 }

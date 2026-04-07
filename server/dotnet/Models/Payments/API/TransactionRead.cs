@@ -5,11 +5,11 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.Models.Payments;
 public class TransactionRead
 {
     [JsonPropertyName("amount")]
-    public int Amount { get; set; }
+    public required int Amount { get; set; }
 
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public required string Id { get; set; }
 
     [JsonPropertyName("token")]
-    public string Token { get; set; }
+    public string? Token { get; set; }
 }
