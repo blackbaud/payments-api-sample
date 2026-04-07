@@ -1,12 +1,12 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Blackbaud.PaymentsAPITutorial.BusinessLogic.Interfaces;
-using Blackbaud.PaymentsAPITutorial.DataAccess;
-using Blackbaud.PaymentsAPITutorial.DataAccess.Models;
-using Blackbaud.PaymentsAPITutorial.Models.Payments;
+using Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic.Interfaces;
+using Blackbaud.PaymentsAPI.Sample.Backend.DataAccess;
+using Blackbaud.PaymentsAPI.Sample.Backend.DataAccess.Models;
+using Blackbaud.PaymentsAPI.Sample.Backend.Models.Payments;
 
-namespace Blackbaud.PaymentsAPITutorial.BusinessLogic;
+namespace Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic;
 
 /// <summary>
 /// Interacts directly with SKY API Payments endpoints.
@@ -17,8 +17,6 @@ public class PaymentsService
     private readonly IAuthenticationService _authService;
     private readonly IHttpClientFactory _httpClientFactory = null!;
     private readonly LocalFileDataAdapter _localFileDataAdapter;
-
-    private string? environmentId;
 
     /// <summary>
     /// Constructor
@@ -61,7 +59,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return model;
+        return model!;
     }
 
     /// <inheritdoc/>
@@ -75,7 +73,6 @@ public class PaymentsService
         {
             Key = publicKey,
             PaymentConfigurationId = savedPaymentData.PaymentConfigurationId,
-            EnvironmentId = environmentId,
         };
 
         return config;
@@ -122,94 +119,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return transactionRead;
-    }
-
-    public async Task<TransactionRead> CaptureCheckoutTransaction(
-        TransactionCaptureRequest request,
-        CancellationToken cancellationToken
-    )
-    {
-        var httpClient = await GetClient(cancellationToken, true);
-
-        if (!string.IsNullOrEmpty(request.CardToken))
-        {
-            var savedPaymentData = await GetSavedPaymentData();
-            savedPaymentData.CardToken = request.CardToken;
-
-            await _localFileDataAdapter.WriteDataAsync(savedPaymentData);
-        }
-
-        var checkoutTransactionRequest = new CheckoutTransactionRequest
-        {
-            TransactionToken = request.TransactionToken,
-            Amount = request.Amount,
-        };
-
-        var requestBody = new StringContent(
-            JsonSerializer.Serialize(checkoutTransactionRequest),
-            Encoding.UTF8,
-            "application/json"
-        );
-
-        var response = await httpClient.PostAsync(
-            $"checkout/transaction",
-            requestBody,
-            cancellationToken
-        );
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return transactionRead;
-    }
-
-    public async Task<TransactionRead> CreateBackofficeTransaction(
-        CancellationToken cancellationToken
-    )
-    {
-        var httpClient = await GetClient(cancellationToken, true);
-
-        var savedPaymentData = await GetSavedPaymentData();
-        var cardToken = savedPaymentData.CardToken;
-        var paymentConfigurationId = savedPaymentData.PaymentConfigurationId;
-
-        var createTransactionRequest = new CreateTransactionRequest
-        {
-            Amount = 1212,
-            CardToken = cardToken,
-            PaymentConfigurationId = paymentConfigurationId,
-            TransactionType = "CardNotPresent",
-        };
-
-        var requestBody = new StringContent(
-            JsonSerializer.Serialize(createTransactionRequest),
-            Encoding.UTF8,
-            "application/json"
-        );
-
-        var response = await httpClient.PostAsync($"transactions", requestBody, cancellationToken);
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var transactionRead = await response.Content.ReadFromJsonAsync<TransactionRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return transactionRead;
+        return transactionRead!;
     }
 
     public async Task<string> GetPublicKey(CancellationToken cancellationToken)
@@ -232,34 +142,7 @@ public class PaymentsService
             cancellationToken: cancellationToken
         );
 
-        return model.PublicKey;
-    }
-
-    public async Task<string> GetSecurityToken(CancellationToken cancellationToken)
-    {
-        var savedPaymentData = await GetSavedPaymentData();
-        var httpClient = await GetClient(cancellationToken, false);
-        var response = await httpClient.GetAsync(
-            $"checkout/securitytoken/{savedPaymentData.PaymentConfigurationId}",
-            cancellationToken
-        );
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            return null!;
-        }
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var model = await response.Content.ReadFromJsonAsync<SecurityTokenRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return model.SecurityToken;
+        return model!.PublicKey;
     }
 
     public async Task<SavedPaymentData> GetSavedPaymentData()
@@ -289,15 +172,13 @@ public class PaymentsService
         {
             var refresh = await _authService.RefreshAccessToken(cancellationToken);
             token = refresh.AccessToken;
-            environmentId = refresh.EnvironmentId;
         }
         else
         {
             var validRefresh = await _authService.HasValidRefreshToken();
             if (!_authService.IsAccessTokenValid() && validRefresh)
             {
-                var refreshToken = await _authService.RefreshAccessToken(cancellationToken);
-                environmentId = refreshToken.EnvironmentId;
+                await _authService.RefreshAccessToken(cancellationToken);
             }
             token = _sessionService.GetAccessToken();
         }

@@ -1,0 +1,69 @@
+<main class="container">
+  <form [formGroup]="checkoutForm">
+    <div>
+      <h3>Current configuration</h3>
+      <div>
+        <label>Payment Configuration Id</label>
+        <div>
+          <code id="payment-config-id">{{
+            checkoutConfig?.payment_configuration_id
+          }}</code>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Transaction details</h3>
+      <div></div>
+      <div>
+        <label for="amount">Amount</label>
+        <input
+          id="amount"
+          formControlName="amount"
+          spellcheck="false"
+          type="number"
+          step="0.01"
+        />
+      </div>
+    </div>
+
+    <button
+      class="sky-btn sky-btn-default"
+      (click)="openCheckout()"
+      type="button"
+    >
+      Donate
+    </button>
+  </form>
+
+  <div>
+    @if (capturing) {
+      <p>Capturing...</p>
+    }
+
+    <h5>Results</h5>
+    <div>
+      <div>
+        Transaction id:
+        <code id="transaction-token">{{
+          checkoutComplete?.transaction?.id
+        }}</code>
+      </div>
+    </div>
+    <div>
+      <div>
+        Account token:
+        <code id="card-token">{{
+          checkoutComplete?.transaction?.accountToken
+        }}</code>
+      </div>
+    </div>
+    <div>
+      <div>
+        Authorized amount:
+        <code id="authorized-amount">{{
+          checkoutComplete?.transaction?.amountDetails?.total
+        }}</code>
+      </div>
+    </div>
+  </div>
+</main>

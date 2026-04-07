@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "C#: App Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/Blackbaud.PaymentsAPI.Sample.Backend.csproj"
+        }
+    ]
+}
