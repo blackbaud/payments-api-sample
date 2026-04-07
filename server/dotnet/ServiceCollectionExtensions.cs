@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
         // Add Http client for authorizing with SKY API
-        services.AddHttpClient<IAuthenticationService, AuthenticationService>(
+        services.AddHttpClient(
             "AuthenticationService",
             client =>
             {
@@ -45,7 +45,7 @@ public static class ServiceCollectionExtensions
             }
         );
 
-        services.AddHttpClient<PaymentsService>(
+        services.AddHttpClient(
             "PaymentsService",
             client =>
             {
@@ -60,7 +60,7 @@ public static class ServiceCollectionExtensions
             }
         );
 
-        services.AddHttpClient<GiftsService>(
+        services.AddHttpClient(
             "GiftsService",
             client =>
             {

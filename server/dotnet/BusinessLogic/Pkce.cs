@@ -62,7 +62,7 @@ public class Pkce
         for (int i = 0; i < highEntropyCryptograph.Length; i++)
         {
             highEntropyCryptograph[i] = unreservedCharacters[
-                random.Next(unreservedCharacters.Length)
+                RandomNumberGenerator.GetInt32(unreservedCharacters.Length)
             ];
         }
 
