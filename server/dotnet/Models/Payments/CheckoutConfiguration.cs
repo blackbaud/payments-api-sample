@@ -9,7 +9,4 @@ public class CheckoutConfiguration
 
     [JsonPropertyName("payment_configuration_id")]
     public string PaymentConfigurationId { get; set; }
-
-    [JsonPropertyName("environment_id")]
-    public string? EnvironmentId { get; set; }
 }

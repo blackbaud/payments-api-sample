@@ -18,8 +18,6 @@ public class PaymentsService
     private readonly IHttpClientFactory _httpClientFactory = null!;
     private readonly LocalFileDataAdapter _localFileDataAdapter;
 
-    private string? environmentId;
-
     /// <summary>
     /// Constructor
     /// </summary>
@@ -75,7 +73,6 @@ public class PaymentsService
         {
             Key = publicKey,
             PaymentConfigurationId = savedPaymentData.PaymentConfigurationId,
-            EnvironmentId = environmentId,
         };
 
         return config;
@@ -289,15 +286,13 @@ public class PaymentsService
         {
             var refresh = await _authService.RefreshAccessToken(cancellationToken);
             token = refresh.AccessToken;
-            environmentId = refresh.EnvironmentId;
         }
         else
         {
             var validRefresh = await _authService.HasValidRefreshToken();
             if (!_authService.IsAccessTokenValid() && validRefresh)
             {
-                var refreshToken = await _authService.RefreshAccessToken(cancellationToken);
-                environmentId = refreshToken.EnvironmentId;
+                await _authService.RefreshAccessToken(cancellationToken);
             }
             token = _sessionService.GetAccessToken();
         }
