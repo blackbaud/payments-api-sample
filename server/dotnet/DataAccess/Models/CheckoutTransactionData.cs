@@ -5,7 +5,7 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.DataAccess.Models;
 
 public class CheckoutTransactionData
 {
-    public string? TransactionToken { get; set; }
+    public string? TransactionId { get; set; }
     public TransactionRead? Transaction { get; set; }
     public GiftRead? Gift { get; set; }
 }

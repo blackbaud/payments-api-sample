@@ -114,6 +114,7 @@ export class Checkout implements OnInit {
       },
       body: JSON.stringify({
         amount: amount,
+        payment_configuration_id: this.checkoutConfig?.payment_configuration_id,
       }),
     }).then(() => {
       alert('Payment captured');

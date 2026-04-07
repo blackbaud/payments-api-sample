@@ -3,10 +3,6 @@ using System.Text.Json.Serialization;
 
 public class TransactionCaptureRequest
 {
-    [JsonPropertyName("transaction_token")]
-    [Required]
-    public required string TransactionToken { get; set; }
-
     [JsonPropertyName("amount")]
     public int Amount { get; set; }
 
@@ -15,5 +11,5 @@ public class TransactionCaptureRequest
 
     [JsonPropertyName("payment_configuration_id")]
     [Required]
-    public required string PaymentConfigurationId { get; set; }
+    public string? PaymentConfigurationId { get; set; }
 }

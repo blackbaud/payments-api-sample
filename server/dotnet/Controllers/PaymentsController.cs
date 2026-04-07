@@ -58,45 +58,6 @@ public class PaymentsController : ControllerBase
     }
 
     /// <summary>
-    /// Captures a transaction using old Checkout
-    /// </summary>
-    [HttpPost("checkouttransactions/capture")]
-    [AllowAnonymous]
-    public async Task<IActionResult> CaptureOldCheckoutTransaction(
-        [FromBody] TransactionCaptureRequest request,
-        CancellationToken cancellationToken
-    )
-    {
-        // Capture the checkout transaction
-        var transactionRead = await _paymentsService.CaptureCheckoutTransaction(
-            request,
-            cancellationToken
-        );
-
-        // Create a Gift record in RE NXT connected to the transaction
-        var giftRead = await _giftsService.CreateGift(
-            transactionRead,
-            request.PaymentConfigurationId,
-            request.CardToken,
-            anonymous: false,
-            cancellationToken,
-            request.TransactionToken
-        );
-
-        // Save the transaction and gift records to a local file
-        var checkoutTransactionData = new CheckoutTransactionData
-        {
-            TransactionToken = request.TransactionToken,
-            Transaction = transactionRead,
-            Gift = giftRead,
-        };
-
-        await _localFileDataAdapter.WriteDataAsync(checkoutTransactionData);
-
-        return Ok();
-    }
-
-    /// <summary>
     /// Captures a transaction
     /// </summary>
     [HttpPost("transactions/{transactionId}/capture")]
@@ -117,17 +78,17 @@ public class PaymentsController : ControllerBase
         // Create a Gift record in RE NXT connected to the transaction
         var giftRead = await _giftsService.CreateGift(
             transactionRead,
-            request.PaymentConfigurationId,
+            request.PaymentConfigurationId!,
             request.CardToken,
             anonymous: false,
             cancellationToken,
-            request.TransactionToken
+            transactionId
         );
 
         // Save the transaction and gift records to a local file
         var checkoutTransactionData = new CheckoutTransactionData
         {
-            TransactionToken = request.TransactionToken,
+            TransactionId = transactionId,
             Transaction = transactionRead,
             Gift = giftRead,
         };
