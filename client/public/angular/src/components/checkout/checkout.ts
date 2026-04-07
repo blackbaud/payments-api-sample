@@ -5,8 +5,8 @@ import {
   BlackbaudCheckoutService,
   CheckoutCompleteEvent,
   CheckoutConfiguration,
-  CheckoutModalComponent,
   CheckoutModalPaymentOptions,
+  CheckoutWorkflowMode,
 } from '@blackbaud/checkout';
 
 import {
@@ -26,7 +26,7 @@ declare let BlackbaudCheckout: typeof BlackbaudCheckoutConstructor;
   styleUrl: './checkout.scss',
 })
 export class Checkout implements OnInit {
-  public checkout?: BlackbaudCheckoutService;
+  #checkout?: BlackbaudCheckoutService;
 
   #baseUrl = 'https://localhost:5001/payments';
 
@@ -35,6 +35,7 @@ export class Checkout implements OnInit {
   public checkoutConfig?: ProcessingConfiguration;
   public checkoutForm: FormGroup;
   public checkoutComplete?: CheckoutCompleteEvent;
+  public capturing: boolean = false;
 
   get amount(): number {
     const currencyAmount = this.checkoutForm.get('amount')!.value as number;
@@ -57,6 +58,7 @@ export class Checkout implements OnInit {
         this.checkoutConfig = configResponse;
 
         const checkoutConfig: CheckoutConfiguration = {
+          workflowMode: CheckoutWorkflowMode.Modal,
           paymentConfigurationId: configResponse.payment_configuration_id,
           applicationName: 'Payments API',
           completeCoverOptions: {},
@@ -82,9 +84,9 @@ export class Checkout implements OnInit {
           primaryColor: '#1870B8',
         };
 
-        this.checkout = BlackbaudCheckout(checkoutConfig);
+        this.#checkout = BlackbaudCheckout(checkoutConfig);
 
-        this.checkout.checkoutComplete.subscribe(
+        this.#checkout.checkoutComplete.subscribe(
           (evt: CheckoutCompleteEvent) => {
             this.checkoutComplete = evt;
             this.captureTransaction(
@@ -97,16 +99,15 @@ export class Checkout implements OnInit {
   }
 
   public openCheckout() {
-    let modal: CheckoutModalComponent =
-      this.checkout!.createCheckoutModalComponent();
     let modalOptions: CheckoutModalPaymentOptions = {
       baseAmount: this.amount,
     };
-    modal.openPaymentForm(modalOptions);
+    this.#checkout!.checkoutModal.openPaymentForm(modalOptions);
   }
 
   private async captureTransaction(transactionId: string, amount: number) {
     // Capture the payment
+    this.capturing = true;
     fetch(`${this.#baseUrl}/transactions/${transactionId}/capture`, {
       method: 'POST',
       headers: {
@@ -117,6 +118,7 @@ export class Checkout implements OnInit {
         payment_configuration_id: this.checkoutConfig?.payment_configuration_id,
       }),
     }).then(() => {
+      this.capturing = false;
       alert('Payment captured');
     });
   }
