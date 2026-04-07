@@ -183,7 +183,7 @@ public class PaymentsService
         {
             Amount = 1212,
             CardToken = cardToken,
-            PaymentConfigurationId = paymentConfigurationId,
+            PaymentConfigurationId = paymentConfigurationId!,
             TransactionType = "CardNotPresent",
         };
 
@@ -230,33 +230,6 @@ public class PaymentsService
         );
 
         return model!.PublicKey;
-    }
-
-    public async Task<string> GetSecurityToken(CancellationToken cancellationToken)
-    {
-        var savedPaymentData = await GetSavedPaymentData();
-        var httpClient = await GetClient(cancellationToken, false);
-        var response = await httpClient.GetAsync(
-            $"checkout/securitytoken/{savedPaymentData.PaymentConfigurationId}",
-            cancellationToken
-        );
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            return null!;
-        }
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var model = await response.Content.ReadFromJsonAsync<SecurityTokenRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return model!.SecurityToken;
     }
 
     public async Task<SavedPaymentData> GetSavedPaymentData()

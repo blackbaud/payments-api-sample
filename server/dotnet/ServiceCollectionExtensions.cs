@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
             client =>
             {
                 // Set the base address to the AuthBaseUrl
-                client.BaseAddress = new Uri(appSettings.AuthBaseUri);
+                client.BaseAddress = new Uri(appSettings.AuthBaseUri!);
 
                 // encode the client id and secret
                 var encoded = Convert.ToBase64String(

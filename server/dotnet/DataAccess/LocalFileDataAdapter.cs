@@ -18,7 +18,7 @@ public class LocalFileDataAdapter
         EnsureDirectoryExists();
     }
 
-    public async Task<T?> ReadDataAsync<T>()
+    public async Task<T> ReadDataAsync<T>()
         where T : new()
     {
         var filePath = GetFilePath<T>();
@@ -30,10 +30,10 @@ public class LocalFileDataAdapter
         var json = await File.ReadAllTextAsync(filePath);
         if (string.IsNullOrEmpty(json))
         {
-            return default;
+            return new T();
         }
 
-        return JsonSerializer.Deserialize<T>(json);
+        return JsonSerializer.Deserialize<T>(json)!;
     }
 
     public async Task WriteDataAsync<T>(T data)

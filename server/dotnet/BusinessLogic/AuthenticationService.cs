@@ -11,7 +11,7 @@ namespace Blackbaud.PaymentsAPI.Sample.Backend.BusinessLogic;
 /// </summary>
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly IOptions<AppSettings> _appSettings;
+    private readonly AppSettings _appSettings;
     private readonly ISessionService _sessionService;
     private readonly LocalFileDataAdapter _localFileDataAdapter;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -23,7 +23,7 @@ public class AuthenticationService : IAuthenticationService
         IHttpClientFactory httpClientFactory
     )
     {
-        _appSettings = appSettings;
+        _appSettings = appSettings.Value;
         _sessionService = sessionService;
         _localFileDataAdapter = localFileDataAdapter;
         _httpClientFactory = httpClientFactory;
@@ -97,7 +97,7 @@ public class AuthenticationService : IAuthenticationService
             {
                 { "code", code },
                 { "grant_type", "authorization_code" },
-                { "redirect_uri", _appSettings.Value.AuthRedirectUri },
+                { "redirect_uri", _appSettings.AuthRedirectUri },
                 { "code_verifier", verifier },
             },
             cancellationToken
@@ -145,12 +145,12 @@ public class AuthenticationService : IAuthenticationService
 
         // The auth client must have PKCE enabled
         var url =
-            $"authorization?response_type=code&code_challenge_method=S256&client_id={_appSettings.Value.AuthClientId}&redirect_uri={_appSettings.Value.AuthRedirectUri}&code_challenge={pkce.CodeChallenge}&state={state}";
+            $"authorization?response_type=code&code_challenge_method=S256&client_id={_appSettings.AuthClientId}&redirect_uri={_appSettings.AuthRedirectUri}&code_challenge={pkce.CodeChallenge}&state={state}";
 
         // store the verifier using the state as the key
         _sessionService.SetStateVerifier(state, pkce.CodeVerifier);
 
-        return new Uri(new Uri(_appSettings.Value.AuthBaseUri), url);
+        return new Uri(new Uri(_appSettings.AuthBaseUri), url);
     }
 
     /// <summary>
