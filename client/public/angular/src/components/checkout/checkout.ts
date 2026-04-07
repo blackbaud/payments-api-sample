@@ -9,13 +9,19 @@ import {
   CheckoutModalPaymentOptions,
 } from '@blackbaud/checkout';
 
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ProcessingConfiguration } from '../../shared/models/processing-configuration';
 
 declare let BlackbaudCheckout: typeof BlackbaudCheckoutConstructor;
 
 @Component({
   selector: 'app-checkout',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -27,8 +33,22 @@ export class Checkout implements OnInit {
   #client = inject(HttpClient);
 
   public checkoutConfig?: ProcessingConfiguration;
-
+  public checkoutForm: FormGroup;
   public checkoutComplete?: CheckoutCompleteEvent;
+
+  constructor() {
+    this.checkoutForm = new FormGroup({
+      amount: new FormControl(27.5, {
+        nonNullable: true,
+        validators: [Validators.required, Validators.min(0)],
+      }),
+      isRecurring: new FormControl(false),
+      chargeLater: new FormControl(false),
+      isVariableAmount: new FormControl(false),
+      billingName: new FormControl(''),
+      comment: new FormControl(''),
+    });
+  }
 
   ngOnInit(): void {
     this.#client
@@ -37,7 +57,6 @@ export class Checkout implements OnInit {
         this.checkoutConfig = configResponse;
 
         const checkoutConfig: CheckoutConfiguration = {
-          environmentId: configResponse.environment_id,
           paymentConfigurationId: configResponse.payment_configuration_id,
           applicationName: 'Payments API',
           completeCoverOptions: {},

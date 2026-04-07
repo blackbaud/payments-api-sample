@@ -1,40 +1,34 @@
 <main class="container">
-  <div>
-    <h3>Current configuration</h3>
+  <form [formGroup]="checkoutForm">
     <div>
-      <label>Payment Configuration Id</label>
+      <h3>Current configuration</h3>
       <div>
-        <code id="payment-config-id">{{
+        <label>Payment Configuration Id</label>
+        <div>
+          <code id="payment-config-id">{{
           checkoutConfig?.payment_configuration_id
         }}</code>
-      </div>
-      <label>Environment id:</label>
-      <div>
-        <code id="env-id">{{ checkoutConfig?.environment_id }}</code>
+        </div>
       </div>
     </div>
-  </div>
-  <div>
-    <h3>Transaction details</h3>
-    <div></div>
     <div>
-      <label for="amount">Amount</label>
-      <input
-        formControlName="amount"
-        spellcheck="false"
-        type="number"
-        value="27.50"
-      />
+      <h3>Transaction details</h3>
+      <div></div>
+      <div>
+        <label for="amount">Amount</label>
+        <input formControlName="amount"
+          spellcheck="false"
+          type="number"
+          step="0.01" />
+      </div>
     </div>
-  </div>
 
-  <button
-    class="sky-btn sky-btn-default"
-    (click)="openCheckout()"
-    type="button"
-  >
-    Donate
-  </button>
+    <button class="sky-btn sky-btn-default"
+      (click)="openCheckout()"
+      type="button">
+      Donate
+    </button>
+  </form>
 
   <div>
     <h5>Results</h5>
