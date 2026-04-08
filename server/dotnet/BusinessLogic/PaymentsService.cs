@@ -67,11 +67,9 @@ public class PaymentsService
         CancellationToken cancellationToken
     )
     {
-        var publicKey = await GetPublicKey(cancellationToken);
         var savedPaymentData = await GetSavedPaymentData();
         var config = new CheckoutConfiguration
         {
-            Key = publicKey,
             PaymentConfigurationId = savedPaymentData.PaymentConfigurationId,
         };
 
@@ -120,29 +118,6 @@ public class PaymentsService
         );
 
         return transactionRead!;
-    }
-
-    public async Task<string> GetPublicKey(CancellationToken cancellationToken)
-    {
-        var httpClient = await GetClient(cancellationToken, true);
-        var response = await httpClient.GetAsync($"checkout/publickey", cancellationToken);
-        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-        {
-            return null!;
-        }
-
-        if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        response.EnsureSuccessStatusCode();
-
-        var model = await response.Content.ReadFromJsonAsync<PublicKeyRead>(
-            cancellationToken: cancellationToken
-        );
-
-        return model!.PublicKey;
     }
 
     public async Task<SavedPaymentData> GetSavedPaymentData()
