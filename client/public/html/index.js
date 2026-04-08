@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const _baseUrl = "https://localhost:5001/api/payments";
+  const _baseUrl = "https://localhost:5001/payments";
 
   // Fetch checkout config from api
   let configResponse = await fetch(`${_baseUrl}/checkoutconfiguration`);
@@ -7,48 +7,72 @@ document.addEventListener("DOMContentLoaded", async () => {
   let cardToken;
 
   document.getElementById("payment-config-id").innerText = config.payment_configuration_id;
-  document.getElementById("public-key").innerText = config.key;
 
-  let recurringInput = document.getElementById("recurring");
-  let amountInput = document.getElementById("amount");
-
-  // Set up base transaction data properties
-  let transactionData = {
-    key: config.key,
-    payment_configuration_id: config.payment_configuration_id
+  const checkoutConfig = {
+    workflowMode: 'modal',
+    paymentConfigurationId: 'bcdefafe-8869-42f2-8bae-3f14f35879a6',
+    applicationName: 'Payments API',
+    paymentMethodOptions: {
+      card: {
+        enabled: true,
+      },
+      directDebit: {
+        enabled: true,
+      },
+      wallets: {
+        applePayEnabled: true,
+        googlePayEnabled: true,
+        amazonPayEnabled: true,
+      },
+      payPal: {
+        enabled: true,
+      },
+      dafPay: {
+        enabled: true,
+      },
+    },
+    primaryColor: '#1870B8',
   };
 
+  const checkout = BlackbaudCheckout(checkoutConfig);
+
+  checkout.checkoutComplete.subscribe(
+    (evt) => {
+      captureTransaction(
+        evt.transaction.id,
+        evt.transaction.amountDetails.total,
+      );
+    },
+  );
+
+  let amountInput = document.getElementById("amount");
+
   document.getElementById("donate").addEventListener("click", async () => {
-    transactionData.amount = parseFloat(amountInput.value);
-    if (recurringInput.checked) {
-      cardToken = crypto.randomUUID();
-      transactionData.card_token = cardToken;
-    }
-    Blackbaud_OpenPaymentForm(transactionData); // credit card transaction
+    const amount = Math.round(parseFloat(amountInput.value) * 100);
+    const modalOptions = {
+      baseAmount: amount,
+    };
+    checkout.checkoutModal.openPaymentForm(modalOptions);
   });
 
-  document.addEventListener("checkoutComplete", async function (event) {
-    // Read event properties
-    const transactionToken = event.detail.transactionToken;
-    const amount = Math.round(event.detail.authorizedamount * 100);
+  function captureTransaction(transactionId, authorizedAmount) {
 
     // Display results
-    document.getElementById("transaction-token").innerText = transactionToken;
-    document.getElementById("card-token").innerText = cardToken;
-    document.getElementById("authorized-amount").innerText = event.detail.authorizedamount;
+    document.getElementById("transaction-id").innerText = transactionId;
+    document.getElementById("authorized-amount").innerText = authorizedAmount;
 
     // Capture the payment
-    await fetch(`${_baseUrl}/checkouttransactions/capture`, {
-      method: "POST",
+    fetch(`${_baseUrl}/transactions/${transactionId}/capture`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        amount: amount,
-        transaction_token: transactionToken,
-        card_token: cardToken,
-        payment_configuration_id: transactionData.payment_configuration_id,
+        payment_configuration_id: config.payment_configuration_id,
+        amount: authorizedAmount,
       }),
+    }).then(() => {
+      alert('Payment captured');
     });
-  });
+  }
 });
