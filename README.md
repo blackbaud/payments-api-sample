@@ -80,7 +80,7 @@ The output of `ng serve` will give you a link to navigate to the running app in 
 ### HTML
 #### Run locally
 
-To serve the static html client code locally, the easiest option is to use [http-server](https://www.npmjs.com/package/http-server) and [ngrok](https://ngrok.com/docs/getting-started/). `http-server` will serve the static content for access in the browser, while `ngrok` will allow use of SSL, which is required to use Blackbaud Checkout.
+To serve the static html client code locally, the easiest option is to use [http-server](https://www.npmjs.com/package/http-server). `http-server` will serve the static content for access in the browser.
 
 - Navigate into directory
 ```
@@ -90,8 +90,3 @@ cd client/html
 ```
 npx http-server .
 ```
-- Run ngrok
-```
-ngrok http http://localhost:8080
-```
-- Access page at url provided by ngrok, i.e., `https://0759-98-214-92-44.ngrok-free.app`
