@@ -61,7 +61,6 @@ export class Checkout implements OnInit {
           workflowMode: CheckoutWorkflowMode.Modal,
           paymentConfigurationId: configResponse.payment_configuration_id,
           applicationName: 'Payments API',
-          completeCoverOptions: {},
           paymentMethodOptions: {
             card: {
               enabled: true,
