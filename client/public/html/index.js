@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Fetch checkout config from api
   let configResponse = await fetch(`${_baseUrl}/checkoutconfiguration`);
   let config = await configResponse.json();
-  let cardToken;
 
   document.getElementById("payment-config-id").innerText = config.payment_configuration_id;
 
